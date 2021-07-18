@@ -1,18 +1,17 @@
 # Grid Map Occlusion Inpainting
 
-## Usage
 
-### Installation
+## Installation
 Create catkin workspace directory at `~/catkin_ws` and clone repository into `~/catkin_ws/src`.
 
-#### Install Dependencies
+### Install Dependencies
 ```bash
 rosdep install -y --from-paths src --rosdistro noetic
 ```
 
-#### Install PyTorch for C++ #####
+### Install PyTorch for C++ #####
 
-PyTorch is used to load neural network models to encoder a wind grid and predict the cost/validity of Dubins paths in wind, given a start and goal pose.
+PyTorch is used inpaint the occlusions in grid maps using a pretrained neural network.
 
 If we want to use a GPU for PyTorch neural network inference, we first need to install [cuDNN](https://docs.nvidia.com/deeplearning/cudnn/install-guide/index.html#installlinux).
 
@@ -37,7 +36,7 @@ Then we can install PyTorch:
 - Unzip the download
 - Add to bash profile: `export Torch_DIR=/absolute/path/to/libtorch/share/cmake/Torch`
 
-#### Build Package
+### Build Package
 ```bash
 catkin_make
 ```
