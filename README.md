@@ -43,6 +43,10 @@ catkin_make
 
 ## Usage
 Run node:
-```
+```bash
 rosrun grid_map_occlusion_inpainting_ros node
+```
+with rviz visualization of grid map:
+```bash
+roslaunch grid_map_occlusion_inpainting_ros occlusion_inpainting.launch
 ```

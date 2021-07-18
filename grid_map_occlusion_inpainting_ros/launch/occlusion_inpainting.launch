@@ -1,0 +1,13 @@
+<launch>
+
+  <arg name="launch_rviz" default="true" />
+  <!-- Launch the grid map iterators demo node -->
+  <node pkg="grid_map_occlusion_inpainting_ros" type="node"
+    name="occlusion_inpainting_node" output="screen" launch-prefix="">
+  </node>
+
+  <!-- Launch RViz with the demo configuration -->
+  <node name="rviz" pkg="rviz" type="rviz"
+    args="-d $(find grid_map_occlusion_inpainting_ros)/rviz/occlusion_inpainting.rviz" if ="$(arg launch_rviz)"/>
+
+</launch>
