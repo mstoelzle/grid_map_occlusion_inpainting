@@ -94,12 +94,17 @@ bool OcclusionInpainter::inpaintGridMap()
 bool OcclusionInpainter::inpaintOpenCV() {
     // occ_img_cv = grid_map::GridMapCvConverter::toImage(gridMap_, "occ_grid_map", );
     // cv::inpaint(occ_img_cv, occ_mask_cv, rec_img_cv, inpaint_radius_, inpaint_method_);
-    
+
     return true;
 }
 
 #if USE_TORCH
 bool OcclusionInpainter::inpaintNeuralNetwork() {
+    double grid_map_mean = gridMap_["occ_grid_map"].meanOfFinites();
+    gridMap_["norm_occ_grid_map"] = gridMap_["occ_grid_map"].array() - grid_map_mean;
+
+    gridMap_["rec_grid_map"] = gridMap_["norm_rec_grid_map"].array() + grid_map_mean;
+
     return true;
 }
 #endif
