@@ -50,12 +50,15 @@
   <!--   <doc_depend>doxygen</doc_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>roscpp</build_depend>
+  <build_depend>grid_map_occlusion_inpainting_core</build_depend>
   <build_depend>grid_map_core</build_depend>
   <build_depend>grid_map_ros</build_depend>
   <build_export_depend>roscpp</build_export_depend>
+  <build_export_depend>grid_map_occlusion_inpainting_core</build_export_depend>
   <build_export_depend>grid_map_core</build_export_depend>
   <build_export_depend>grid_map_ros</build_export_depend>
   <exec_depend>roscpp</exec_depend>
+  <exec_depend>grid_map_occlusion_inpainting_core</exec_depend>
   <exec_depend>grid_map_core</exec_depend>
   <exec_depend>grid_map_ros</exec_depend>
 

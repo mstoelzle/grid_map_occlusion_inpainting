@@ -99,9 +99,9 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+  INCLUDE_DIRS include
 #  LIBRARIES grid_map_occlusion_inpainting
-#  CATKIN_DEPENDS grid_map roscpp
+  CATKIN_DEPENDS grid_map_occlusion_inpainting_core grid_map_core grid_map_ros roscpp
 #  DEPENDS system_lib
 )
 
