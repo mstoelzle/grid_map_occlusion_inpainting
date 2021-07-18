@@ -35,6 +35,7 @@ class OcclusionInpainter
         // Parameters
         int inpaint_method_ = 0; // Telea, Navier-Stokes or NN
         double inpaint_radius_ = 3.; // inpaint radius for Telea, Navier-Stokes
+        double NaN_replacement_ = 0.; // replacement values for NaNs in occluded grid map before inputting into neural network
 
         std::string inputLayer_ = "occ_grid_map";
 
@@ -47,14 +48,20 @@ class OcclusionInpainter
         void addOccMask();
         void addCompLayer();
 
+        // static helper methods
+
     protected:
         // Grid maps
         grid_map::GridMap gridMap_;
 
+        // inpainting methods
         bool inpaintOpenCV();
         #if USE_TORCH
             bool inpaintNeuralNetwork();
         #endif
+
+        // helper methods
+        void replaceNaNs(grid_map::GridMap gridMap, const std::string& inputLayer, const std::string& outputLayer);
 };
 
 } /* namespace */

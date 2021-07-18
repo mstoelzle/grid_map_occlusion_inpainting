@@ -66,6 +66,15 @@ void OcclusionInpainter::addCompLayer() {
     }
 }
 
+void OcclusionInpainter::replaceNaNs(grid_map::GridMap gridMap, const std::string& inputLayer, const std::string& outputLayer) {
+    gridMap[outputLayer] = gridMap[inputLayer];
+    for (grid_map::GridMapIterator iterator(gridMap); !iterator.isPastEnd(); ++iterator) {
+        if (!gridMap.isValid(*iterator, inputLayer)) {
+            gridMap.at(outputLayer, *iterator) = NaN_replacement_;
+        }
+    }
+}
+
 bool OcclusionInpainter::inpaintGridMap()
 {
     if (inpaint_method_ == gmoi::INPAINT_NS || inpaint_method_ == gmoi::INPAINT_TELEA)
