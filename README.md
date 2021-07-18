@@ -40,3 +40,9 @@ Then we can install PyTorch:
 ```bash
 catkin_make
 ```
+
+## Usage
+Run node:
+```
+rosrun grid_map_occlusion_inpainting_ros node
+```

@@ -41,6 +41,8 @@ grid_map::GridMap OcclusionInpainter::getCompGridMap()
 
 bool OcclusionInpainter::inpaintGridMap()
 {
+    recGridMap_ = occGridMap_;
+    compGridMap_ = occGridMap_;
     return true;
 }
 
