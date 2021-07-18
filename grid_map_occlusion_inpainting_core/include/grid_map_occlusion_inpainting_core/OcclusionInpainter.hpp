@@ -47,9 +47,14 @@ class OcclusionInpainter
         void addOccMask();
         void addCompLayer();
 
-    private:
+    protected:
         // Grid maps
         grid_map::GridMap gridMap_;
+
+        bool inpaintOpenCV();
+        #if USE_TORCH
+            bool inpaintNeuralNetwork();
+        #endif
 };
 
 } /* namespace */

@@ -70,16 +70,38 @@ bool OcclusionInpainter::inpaintGridMap()
 {
     if (inpaint_method_ == gmoi::INPAINT_NS || inpaint_method_ == gmoi::INPAINT_TELEA)
     {
-        // occ_img_cv = grid_map::GridMapCvConverter::toImage(gridMap_, "occ_grid_map", );
-
-        // cv::inpaint(occ_img_cv, occ_mask_cv, rec_img_cv, inpaint_radius_, inpaint_method_);
+        if (!inpaintOpenCV()){
+            return false;
+        }
     } else if (inpaint_method_ == gmoi::INPAINT_NN) {
-
+        #if USE_TORCH
+            if (!inpaintNeuralNetwork()){
+                return false;
+            }
+        #else
+            throw std::invalid_argument("The library was compiled without libtorch / PyTorch support." );
+        #endif
     } else {
         throw std::invalid_argument("The chosen inpaint method is not implemented." );
     }
 
+    addCompLayer();
+
     return true;
 }
+
+
+bool OcclusionInpainter::inpaintOpenCV() {
+    // occ_img_cv = grid_map::GridMapCvConverter::toImage(gridMap_, "occ_grid_map", );
+    // cv::inpaint(occ_img_cv, occ_mask_cv, rec_img_cv, inpaint_radius_, inpaint_method_);
+    
+    return true;
+}
+
+#if USE_TORCH
+bool OcclusionInpainter::inpaintNeuralNetwork() {
+    return true;
+}
+#endif
 
 } /* namespace */
