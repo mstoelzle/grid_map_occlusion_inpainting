@@ -11,6 +11,10 @@
 #include <grid_map_core/GridMap.hpp>
 #include <grid_map_ros/GridMapRosConverter.hpp>
 
+#include <grid_map_occlusion_inpainting_core/OcclusionInpainter.hpp>
+
+namespace grid_map_occlusion_inpainting {
+
 OcclusionInpaintingNode::OcclusionInpaintingNode(ros::NodeHandle& nodeHandle)
 {
   ROS_INFO("OcclusionInpaintingNode started");
@@ -57,6 +61,8 @@ void OcclusionInpaintingNode::sub_callback(const grid_map_msgs::GridMap & occGri
   grid_map::GridMapRosConverter::toMessage(compGridMap, compGridMapMsg);
   rec_pub_.publish(compGridMapMsg);
 }
+
+} /* namespace */
 
 int main(int argc, char** argv) {
   ROS_INFO("Launched occlusion_inpainting_node");

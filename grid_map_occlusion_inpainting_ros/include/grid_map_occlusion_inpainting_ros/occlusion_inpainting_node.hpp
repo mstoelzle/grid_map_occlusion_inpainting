@@ -9,6 +9,7 @@
 #include <ros/ros.h>
 #include "grid_map_pcl/GridMapPclLoader.hpp"
 
+namespace grid_map_occlusion_inpainting {
 
 class OcclusionInpaintingNode
 {
@@ -41,3 +42,5 @@ class OcclusionInpaintingNode
 
         grid_map::OcclusionInpainter occInpainter_;
 };
+
+} /* namespace */
