@@ -53,6 +53,19 @@ void OcclusionInpainter::addOccMask() {
     }
 }
 
+/* Add composed grid map */
+void OcclusionInpainter::addCompLayer() {
+    gridMap_.add("comp_grid_map", 0.0);
+    // mapOut.setBasicLayers(std::vector<std::string>());
+    for (grid_map::GridMapIterator iterator(gridMap_); !iterator.isPastEnd(); ++iterator) {
+        if (gridMap_.at("occ_mask", *iterator) == 1.0) {
+            gridMap_.at("comp_grid_map", *iterator) = gridMap_.at("rec_grid_map", *iterator);
+        } else {
+            gridMap_.at("comp_grid_map", *iterator) = gridMap_.at("occ_grid_map", *iterator);
+        }
+    }
+}
+
 bool OcclusionInpainter::inpaintGridMap()
 {
     if (inpaint_method_ == gmoi::INPAINT_NS || inpaint_method_ == gmoi::INPAINT_TELEA)

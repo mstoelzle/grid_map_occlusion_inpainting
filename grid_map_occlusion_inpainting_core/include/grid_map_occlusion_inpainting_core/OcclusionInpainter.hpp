@@ -45,6 +45,7 @@ class OcclusionInpainter
         // logic functions
         bool inpaintGridMap();
         void addOccMask();
+        void addCompLayer();
 
     private:
         // Grid maps
