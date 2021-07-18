@@ -27,13 +27,9 @@ OcclusionInpaintingNode::OcclusionInpaintingNode(ros::NodeHandle& nodeHandle)
   nodeHandle_.param<std::string>("occ_grid_map_topic", occGridMapTopic_, "occ_grid_map");
   sub_ = nodeHandle_.subscribe(occGridMapTopic_, 1, &OcclusionInpaintingNode::sub_callback, this);
 
-  // reconstructed DEMs publisher
+  // Publisher
   nodeHandle_.param<std::string>("rec_grid_map_topic", recGridMapTopic_, "rec_grid_map");
-  recPub_ = nodeHandle_.advertise<grid_map_msgs::GridMap>(recGridMapTopic_, 1, true);
-
-  // composed DEMs publisher
-  nodeHandle_.param<std::string>("comp_grid_map_topic", compGridMapTopic_, "comp_grid_map");
-  compPub_ = nodeHandle_.advertise<grid_map_msgs::GridMap>(compGridMapTopic_, 1, true);
+  pub_ = nodeHandle_.advertise<grid_map_msgs::GridMap>(recGridMapTopic_, 1, true);
 }
 
 OcclusionInpaintingNode::~OcclusionInpaintingNode()
@@ -54,18 +50,12 @@ void OcclusionInpaintingNode::sub_callback(const grid_map_msgs::GridMap & occGri
     ROS_WARN("Could not inpaint grid map");
   }
   
-  grid_map::GridMap recGridMap = occInpainter_.getRecGridMap();
-  grid_map::GridMap compGridMap = occInpainter_.getCompGridMap();
+  grid_map::GridMap recGridMap = occInpainter_.getGridMap();
 
   // publish reconstructed DEM
   grid_map_msgs::GridMap recGridMapMsg;
   grid_map::GridMapRosConverter::toMessage(recGridMap, recGridMapMsg);
-  recPub_.publish(recGridMapMsg);
-
-  // publish composed DEM
-  grid_map_msgs::GridMap compGridMapMsg;
-  grid_map::GridMapRosConverter::toMessage(compGridMap, compGridMapMsg);
-  compPub_.publish(compGridMapMsg);
+  pub_.publish(recGridMapMsg);
 }
 
 } /* namespace */

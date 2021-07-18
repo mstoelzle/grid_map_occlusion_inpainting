@@ -13,6 +13,12 @@
 
 namespace grid_map_occlusion_inpainting {
 
+enum {
+    INPAINT_NS = 0, //!< Use Navier-Stokes based method
+    INPAINT_TELEA = 1, //!< Use the algorithm proposed by Alexandru Telea @cite Telea04
+    INPAINT_NN = 2 // inpainting using a pretrained neural network   
+};
+
 class OcclusionInpainter
 {
     public:
@@ -26,21 +32,23 @@ class OcclusionInpainter
         */
         virtual ~OcclusionInpainter();
 
+        // Parameters
+        int inpaint_method_ = 0; // Telea, Navier-Stokes or NN
+        double inpaint_radius_ = 3.; // inpaint radius for Telea, Navier-Stokes
+
+        std::string inputLayer_ = "occ_grid_map";
+
         // getters and setters
         void setOccGridMap(const grid_map::GridMap occGridMap);
-        grid_map::GridMap getRecGridMap();
-        grid_map::GridMap getCompGridMap();
+        grid_map::GridMap getGridMap();
 
         // logic functions
         bool inpaintGridMap();
+        void addOccMask();
 
     private:
         // Grid maps
-        grid_map::GridMap occGridMap_;
-        grid_map::GridMap recGridMap_;
-        grid_map::GridMap compGridMap_;
-
-        std::string method_; // Telea, Navier-Stokes or NN
+        grid_map::GridMap gridMap_;
 };
 
 } /* namespace */

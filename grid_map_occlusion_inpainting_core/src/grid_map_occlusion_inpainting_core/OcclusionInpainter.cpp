@@ -10,7 +10,13 @@
 #include "grid_map_occlusion_inpainting_core/OcclusionInpainter.hpp"
 
 #include <grid_map_core/grid_map_core.hpp>
-#include <grid_map_msgs/GridMap.h>
+#include <grid_map_cv/GridMapCvConverter.hpp>
+
+#include "opencv2/imgcodecs.hpp"
+#include "opencv2/imgproc.hpp"
+#include "opencv2/photo.hpp"
+
+namespace gmoi = grid_map_occlusion_inpainting;
 
 namespace grid_map_occlusion_inpainting {
 
@@ -26,23 +32,40 @@ OcclusionInpainter::~OcclusionInpainter()
 
 void OcclusionInpainter::setOccGridMap(const grid_map::GridMap occGridMap)
 {
-    occGridMap_ = occGridMap;
+    gridMap_ = occGridMap;
+
+    gridMap_["occ_grid_map"] = gridMap_[inputLayer_];
+    addOccMask();
 }
 
-grid_map::GridMap OcclusionInpainter::getRecGridMap()
+grid_map::GridMap OcclusionInpainter::getGridMap()
 {
-    return recGridMap_;
+    return gridMap_;
 }
 
-grid_map::GridMap OcclusionInpainter::getCompGridMap()
-{
-    return compGridMap_;
+void OcclusionInpainter::addOccMask() {
+    gridMap_.add("occ_mask", 0.0);
+    // mapOut.setBasicLayers(std::vector<std::string>());
+    for (grid_map::GridMapIterator iterator(gridMap_); !iterator.isPastEnd(); ++iterator) {
+        if (!gridMap_.isValid(*iterator, inputLayer_)) {
+            gridMap_.at("occ_mask", *iterator) = 1.0;
+        }
+    }
 }
 
 bool OcclusionInpainter::inpaintGridMap()
 {
-    recGridMap_ = occGridMap_;
-    compGridMap_ = occGridMap_;
+    if (inpaint_method_ == gmoi::INPAINT_NS || inpaint_method_ == gmoi::INPAINT_TELEA)
+    {
+        // occ_img_cv = grid_map::GridMapCvConverter::toImage(gridMap_, "occ_grid_map", );
+
+        // cv::inpaint(occ_img_cv, occ_mask_cv, rec_img_cv, inpaint_radius_, inpaint_method_);
+    } else if (inpaint_method_ == gmoi::INPAINT_NN) {
+
+    } else {
+        throw std::invalid_argument("The chosen inpaint method is not implemented." );
+    }
+
     return true;
 }
 

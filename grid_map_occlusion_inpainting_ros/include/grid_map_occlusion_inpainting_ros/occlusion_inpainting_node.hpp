@@ -31,15 +31,13 @@ class OcclusionInpaintingNode
     private:
         std::string occGridMapTopic_;
         std::string recGridMapTopic_;
-        std::string compGridMapTopic_;
 
         //! ROS nodehandle.
         ros::NodeHandle nodeHandle_;
 
         // Publishers and subscribers
         ros::Subscriber sub_;
-        ros::Publisher recPub_;
-        ros::Publisher compPub_;
+        ros::Publisher pub_;
 
         grid_map_occlusion_inpainting::OcclusionInpainter occInpainter_;
 };
