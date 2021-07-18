@@ -16,6 +16,18 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
+find_package(OpenCV REQUIRED)
+
+# PyTorch
+find_package(Torch)
+if (torch_FOUND)
+  add_definitions(-DUSE_TORCH=1)
+  message("Compiling with Torch support")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
+else()
+  add_definitions(-DUSE_TORCH=0)
+    message("Compiling without Torch support")
+endif()
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -119,7 +131,13 @@ catkin_package(
 include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
+  ${OPENCV_INCLUDE_DIRS}
 )
+if (torch_FOUND)
+  include_directories(
+    ${TORCH_INCLUDE_DIRS}
+  )
+endif()
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
