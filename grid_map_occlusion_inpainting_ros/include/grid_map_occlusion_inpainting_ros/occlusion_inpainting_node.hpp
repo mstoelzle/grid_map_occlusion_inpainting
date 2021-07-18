@@ -7,7 +7,8 @@
  */
 
 #include <ros/ros.h>
-#include "grid_map_pcl/GridMapPclLoader.hpp"
+
+#include <grid_map_occlusion_inpainting_core/OcclusionInpainter.hpp>
 
 namespace grid_map_occlusion_inpainting {
 
@@ -40,7 +41,7 @@ class OcclusionInpaintingNode
         ros::Publisher recPub_;
         ros::Publisher compPub_;
 
-        grid_map::OcclusionInpainter occInpainter_;
+        grid_map_occlusion_inpainting::OcclusionInpainter occInpainter_;
 };
 
 } /* namespace */
