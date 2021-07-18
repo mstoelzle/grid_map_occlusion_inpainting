@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>grid_map_occlusion_inpainting</name>
+  <name>grid_map_occlusion_inpainting_ros</name>
   <version>0.0.0</version>
   <description>ROS package for the inpainting of grid maps through OpenCV and neural network methods</description>
 
@@ -51,15 +51,12 @@
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>grid_map_core</build_depend>
-  <build_depend>grid_map_cv</build_depend>
   <build_depend>grid_map_ros</build_depend>
   <build_export_depend>roscpp</build_export_depend>
   <build_export_depend>grid_map_core</build_export_depend>
-  <build_export_depend>grid_map_cv</build_export_depend>
   <build_export_depend>grid_map_ros</build_export_depend>
   <exec_depend>roscpp</exec_depend>
   <exec_depend>grid_map_core</exec_depend>
-  <exec_depend>grid_map_cv</exec_depend>
   <exec_depend>grid_map_ros</exec_depend>
 
 

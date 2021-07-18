@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.5.1)
-project(grid_map_occlusion_inpainting)
+project(grid_map_occlusion_inpainting_ros)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -10,25 +10,8 @@ project(grid_map_occlusion_inpainting)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   grid_map_core
-  grid_map_cv
   grid_map_ros
 )
-
-## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
-find_package(OpenCV REQUIRED)
-
-# PyTorch
-find_package(Torch)
-if (torch_FOUND)
-  add_definitions(-DUSE_TORCH=1)
-  message("Compiling with Torch support")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
-else()
-  add_definitions(-DUSE_TORCH=0)
-    message("Compiling without Torch support")
-endif()
-
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -131,13 +114,7 @@ catkin_package(
 include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
-  ${OPENCV_INCLUDE_DIRS}
 )
-if (torch_FOUND)
-  include_directories(
-    ${TORCH_INCLUDE_DIRS}
-  )
-endif()
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
