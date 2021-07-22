@@ -25,7 +25,7 @@ if (Torch_FOUND)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 else()
   add_definitions(-DUSE_TORCH=0)
-    message("Compiling without Torch support")
+  message("Compiling without Torch support")
 endif()
 
 
@@ -88,9 +88,11 @@ add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EX
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(${PROJECT_NAME} 
+  PRIVATE
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
+  ${TORCH_LIBRARIES}
 )
 
 #############

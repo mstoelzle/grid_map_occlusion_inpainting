@@ -16,6 +16,11 @@
 #include "opencv2/imgproc.hpp"
 #include "opencv2/photo.hpp"
 
+#if USE_TORCH
+#include <torch/torch.h>
+#include <torch/script.h> // One-stop header.
+#endif
+
 namespace gmoi = grid_map_occlusion_inpainting;
 
 namespace grid_map_occlusion_inpainting {
@@ -121,9 +126,36 @@ bool OcclusionInpainter::inpaintOpenCV(grid_map::GridMap gridMap) {
 }
 
 #if USE_TORCH
+bool OcclusionInpainter::loadNeuralNetworkModel() {
+    torch::jit::script::Module module;
+    try {
+        // Deserialize the ScriptModule from a file using torch::jit::load().
+        module = torch::jit::load(neuralNetworkPath_);
+    }
+    catch (const c10::Error& e) {
+        throw std::runtime_error("Could not load the neural network model");
+        return false;
+    }
+
+   
+    return true;
+}
+
 bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap gridMap) {
     double grid_map_mean = gridMap["occ_grid_map"].meanOfFinites();
     gridMap["norm_occ_grid_map"] = gridMap["occ_grid_map"].array() - grid_map_mean;
+
+    torch::Device device_(torch::cuda::is_available() ? torch::kCUDA : torch::kCPU);
+
+    /*
+    // Create a vector of inputs.
+    std::vector<torch::jit::IValue> inputs;
+    inputs.push_back(torch::ones({1, 3, 224, 224}));
+
+    // Execute the model and turn its output into a tensor.
+    at::Tensor output = module.forward(inputs).toTensor();
+    std::cout << output.slice(1,  0, 5) << '\n';
+    */
 
     gridMap["rec_grid_map"] = gridMap["norm_rec_grid_map"].array() + grid_map_mean;
 
