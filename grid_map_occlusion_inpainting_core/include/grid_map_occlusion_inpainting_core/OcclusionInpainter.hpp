@@ -67,13 +67,39 @@ class OcclusionInpainter
         // inpainting methods
         bool inpaintOpenCV(grid_map::GridMap gridMap);
 
-        // libtorch
-        #if USE_TORCH
-            bool inpaintNeuralNetwork(grid_map::GridMap gridMap);
-        #endif
-
         // helper methods
         void replaceNaNs(grid_map::GridMap gridMap, const std::string& inputLayer, const std::string& outputLayer);
+
+        // libtorch
+        #if USE_TORCH
+            // libtorch attributes
+            torch::jit::script::Module module_;
+
+            bool inpaintNeuralNetwork(grid_map::GridMap gridMap);
+        
+            /* 
+            torch::Tensor eigenVectorToTorchTensor(VectorXd e){
+                auto t = torch::rand({e.rows()});
+                float* data = t.data_ptr<float>();
+
+                Map<VectorXf> ef(data,t.size(0),1);
+                ef = e.cast<float>();
+
+                t.requires_grad_(true);
+                return t;
+            }
+
+            torch::Tensor eigenMatrixToTorchTensor(MatrixXd e){
+                auto t = torch::rand({e.cols(),e.rows()});
+                float* data = t.data_ptr<float>();
+
+                Map<MatrixXf> ef(data,t.size(1),t.size(0));
+                ef = e.cast<float>();
+                t.requires_grad_(true);
+                return t.transpose(0,1);
+            }
+            */
+        #endif
 };
 
 } /* namespace */

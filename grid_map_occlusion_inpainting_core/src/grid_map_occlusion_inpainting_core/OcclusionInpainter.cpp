@@ -127,10 +127,9 @@ bool OcclusionInpainter::inpaintOpenCV(grid_map::GridMap gridMap) {
 
 #if USE_TORCH
 bool OcclusionInpainter::loadNeuralNetworkModel() {
-    torch::jit::script::Module module;
     try {
         // Deserialize the ScriptModule from a file using torch::jit::load().
-        module = torch::jit::load(neuralNetworkPath_);
+        module_ = torch::jit::load(neuralNetworkPath_);
     }
     catch (const c10::Error& e) {
         throw std::runtime_error("Could not load the neural network model");
@@ -142,10 +141,13 @@ bool OcclusionInpainter::loadNeuralNetworkModel() {
 }
 
 bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap gridMap) {
+    // normalization of input
     double grid_map_mean = gridMap["occ_grid_map"].meanOfFinites();
     gridMap["norm_occ_grid_map"] = gridMap["occ_grid_map"].array() - grid_map_mean;
 
     torch::Device device_(torch::cuda::is_available() ? torch::kCUDA : torch::kCPU);
+
+    // .to(device);
 
     /*
     // Create a vector of inputs.
@@ -157,6 +159,9 @@ bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap gridMap) {
     std::cout << output.slice(1,  0, 5) << '\n';
     */
 
+    // at::Tensor output = predictor_.forward(inputs).toTensor().to(at::kCPU);
+
+    // denormalization of output
     gridMap["rec_grid_map"] = gridMap["norm_rec_grid_map"].array() + grid_map_mean;
 
     return true;
