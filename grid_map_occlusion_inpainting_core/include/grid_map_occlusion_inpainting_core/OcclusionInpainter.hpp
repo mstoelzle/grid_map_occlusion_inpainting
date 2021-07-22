@@ -55,9 +55,9 @@ class OcclusionInpainter
         grid_map::GridMap gridMap_;
 
         // inpainting methods
-        bool inpaintOpenCV();
+        bool inpaintOpenCV(grid_map::GridMap gridMap);
         #if USE_TORCH
-            bool inpaintNeuralNetwork();
+            bool inpaintNeuralNetwork(grid_map::GridMap gridMap);
         #endif
 
         // helper methods
