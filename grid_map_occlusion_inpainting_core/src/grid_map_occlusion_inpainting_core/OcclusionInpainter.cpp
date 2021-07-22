@@ -12,6 +12,8 @@
 #include <grid_map_core/grid_map_core.hpp>
 #include <grid_map_cv/GridMapCvConverter.hpp>
 
+#include <Eigen/Dense>
+
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/imgproc.hpp"
 #include "opencv2/photo.hpp"

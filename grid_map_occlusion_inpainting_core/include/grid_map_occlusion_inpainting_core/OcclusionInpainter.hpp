@@ -11,6 +11,8 @@
 #include <grid_map_core/grid_map_core.hpp>
 #include <grid_map_msgs/GridMap.h>
 
+#include <Eigen/Dense>
+
 #if USE_TORCH
 #include <torch/torch.h>
 #include <torch/script.h> // One-stop header.
@@ -77,28 +79,26 @@ class OcclusionInpainter
 
             bool inpaintNeuralNetwork(grid_map::GridMap gridMap);
         
-            /* 
-            torch::Tensor eigenVectorToTorchTensor(VectorXd e){
+            torch::Tensor eigenVectorToTorchTensor(Eigen::VectorXd e){
                 auto t = torch::rand({e.rows()});
                 float* data = t.data_ptr<float>();
 
-                Map<VectorXf> ef(data,t.size(0),1);
+                Eigen::Map<Eigen::VectorXf> ef(data,t.size(0),1);
                 ef = e.cast<float>();
 
                 t.requires_grad_(true);
                 return t;
             }
 
-            torch::Tensor eigenMatrixToTorchTensor(MatrixXd e){
+            torch::Tensor eigenMatrixToTorchTensor(Eigen::MatrixXd e){
                 auto t = torch::rand({e.cols(),e.rows()});
                 float* data = t.data_ptr<float>();
 
-                Map<MatrixXf> ef(data,t.size(1),t.size(0));
+                Eigen::Map<Eigen::MatrixXf> ef(data,t.size(1),t.size(0));
                 ef = e.cast<float>();
                 t.requires_grad_(true);
                 return t.transpose(0,1);
             }
-            */
         #endif
 };
 

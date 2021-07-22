@@ -17,7 +17,15 @@ find_package(catkin REQUIRED COMPONENTS
 # find_package(Boost REQUIRED COMPONENTS system)
 find_package(OpenCV REQUIRED)
 
-# PyTorch
+# Find Eigen
+find_package(Eigen3 QUIET)
+if(NOT EIGEN3_FOUND)
+  find_package(PkgConfig REQUIRED)
+  pkg_check_modules(EIGEN3 REQUIRED eigen3)
+  set(EIGEN3_INCLUDE_DIR ${EIGEN3_INCLUDE_DIRS})
+endif()
+
+# Find PyTorch
 find_package(Torch)
 if (Torch_FOUND)
   add_definitions(-DUSE_TORCH=1)
@@ -53,8 +61,10 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(
   include
-  ${catkin_INCLUDE_DIRS}
-  ${OPENCV_INCLUDE_DIRS}
+  SYSTEM
+    ${catkin_INCLUDE_DIRS}
+    ${OPENCV_INCLUDE_DIRS}
+    ${EIGEN3_INCLUDE_DIR}
 )
 if (torch_FOUND)
   include_directories(
