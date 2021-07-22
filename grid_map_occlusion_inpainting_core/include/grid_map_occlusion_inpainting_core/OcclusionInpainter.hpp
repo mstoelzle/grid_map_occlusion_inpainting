@@ -34,7 +34,7 @@ class OcclusionInpainter
 
         // Parameters
         int inpaint_method_ = 0; // Telea, Navier-Stokes or NN
-        double inpaint_radius_ = 3.; // inpaint radius for Telea, Navier-Stokes
+        double inpaint_radius_ = 3.; // inpaint radius for Telea, Navier-Stokes [m]
         double NaN_replacement_ = 0.; // replacement values for NaNs in occluded grid map before inputting into neural network
 
         std::string inputLayer_ = "occ_grid_map";

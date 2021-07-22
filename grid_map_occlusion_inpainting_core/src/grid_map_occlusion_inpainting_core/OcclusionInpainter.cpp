@@ -101,8 +101,21 @@ bool OcclusionInpainter::inpaintGridMap()
 
 
 bool OcclusionInpainter::inpaintOpenCV(grid_map::GridMap gridMap) {
-    // occ_img_cv = grid_map::GridMapCvConverter::toImage(gridMap_, "occ_grid_map", );
-    // cv::inpaint(occ_img_cv, occ_mask_cv, rec_img_cv, inpaint_radius_, inpaint_method_);
+    // TODO: some validation of inputs and parameters
+
+    const float minValue = gridMap.get("occ_grid_map").minCoeffOfFinites();
+    const float maxValue = gridMap.get("occ_grid_map").maxCoeffOfFinites();
+
+    cv::Mat occImage;
+    cv::Mat maskImage;
+    cv::Mat recImage;
+    grid_map::GridMapCvConverter::toImage<unsigned char, 3>(gridMap, "occ_grid_map", CV_8UC3, minValue, maxValue, occImage);
+    grid_map::GridMapCvConverter::toImage<unsigned char, 1>(gridMap, "occ_mask", CV_8UC1, maskImage);
+
+    const double radiusInPixels = inpaint_radius_ / gridMap.getResolution();
+    cv::inpaint(occImage, maskImage, recImage, radiusInPixels, inpaint_method_);
+
+    grid_map::GridMapCvConverter::addLayerFromImage<unsigned char, 3>(recImage, "rec_grid_map", gridMap, minValue, maxValue);
 
     return true;
 }
