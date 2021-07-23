@@ -11,6 +11,7 @@
 #include <grid_map_core/grid_map_core.hpp>
 #include <grid_map_msgs/GridMap.h>
 
+#include <unsupported/Eigen/CXX11/Tensor>
 #include <Eigen/Dense>
 
 #if USE_TORCH
@@ -25,6 +26,9 @@ enum {
     INPAINT_TELEA = 1, //!< Use the algorithm proposed by Alexandru Telea @cite Telea04
     INPAINT_NN = 2 // inpainting using a pretrained neural network   
 };
+
+template<typename T>
+using  MatrixType = Eigen::Matrix<T,Eigen::Dynamic, Eigen::Dynamic>;
 
 class OcclusionInpainter
 {
@@ -60,7 +64,20 @@ class OcclusionInpainter
         // static helper methods
 
         // libtorch
+        #if USE_TORCH
         bool loadNeuralNetworkModel();
+        static void tensorToGridMapLayer(const torch::Tensor& tensor, const std::string& layer, grid_map::GridMap& gridMap) {
+            assert(tensor.ndimension() == 2);
+
+            float* data = tensor.data_ptr<float>();
+            Eigen::Map<Eigen::MatrixXf> ef(data, tensor.size(0), tensor.size(1));
+
+            gridMap.add(layer, ef);
+        }
+        static void gridMapLayerToTensor(grid_map::GridMap& gridMap, const std::string& layer, torch::Tensor& tensor) {
+            tensor = torch::from_blob(gridMap[layer].data(), {1, 1,  gridMap.getSize()[0], gridMap.getSize()[1]}, at::kFloat);
+        }
+        #endif
 
     protected:
         // Grid maps
@@ -79,7 +96,7 @@ class OcclusionInpainter
 
             bool inpaintNeuralNetwork(grid_map::GridMap gridMap);
         
-            torch::Tensor eigenVectorToTorchTensor(Eigen::VectorXd e){
+            /* static torch::Tensor eigenVectorToTorchTensor(Eigen::VectorXd e){
                 auto t = torch::rand({e.rows()});
                 float* data = t.data_ptr<float>();
 
@@ -90,7 +107,7 @@ class OcclusionInpainter
                 return t;
             }
 
-            torch::Tensor eigenMatrixToTorchTensor(Eigen::MatrixXd e){
+            static torch::Tensor eigenMatrixToTorchTensor(Eigen::MatrixXd e){
                 auto t = torch::rand({e.cols(),e.rows()});
                 float* data = t.data_ptr<float>();
 
@@ -99,6 +116,18 @@ class OcclusionInpainter
                 t.requires_grad_(true);
                 return t.transpose(0,1);
             }
+
+            static Eigen::MatrixXd torchTensorToEigenMatrix(torch::Tensor t){
+                auto t = torch::rand({e.cols(),e.rows()});
+
+
+                float* data = t.data_ptr<float>();
+
+                Eigen::Map<Eigen::MatrixXf> ef(data,t.size(1),t.size(0));
+                ef = e.cast<float>();
+                t.requires_grad_(true);
+                return e.transpose(0,1);
+            } */
         #endif
 };
 

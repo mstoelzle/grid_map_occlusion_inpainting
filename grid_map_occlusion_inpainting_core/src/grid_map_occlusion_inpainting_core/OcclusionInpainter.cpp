@@ -137,7 +137,6 @@ bool OcclusionInpainter::loadNeuralNetworkModel() {
         throw std::runtime_error("Could not load the neural network model");
         return false;
     }
-
    
     return true;
 }
@@ -147,21 +146,33 @@ bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap gridMap) {
     double grid_map_mean = gridMap["occ_grid_map"].meanOfFinites();
     gridMap["norm_occ_grid_map"] = gridMap["occ_grid_map"].array() - grid_map_mean;
 
-    torch::Device device_(torch::cuda::is_available() ? torch::kCUDA : torch::kCPU);
+    // torch device
+    torch::Device device(torch::cuda::is_available() ? torch::kCUDA : torch::kCPU);
 
-    // .to(device);
+    // init torch tensors
+    auto occGridMapTensor = torch::rand({1, 1, gridMap.getSize()[0], gridMap.getSize()[1]});
+    OcclusionInpainter::gridMapLayerToTensor(gridMap, "norm_occ_grid_map", occGridMapTensor);
+    auto occMaskTensor = torch::rand({1, 1, gridMap.getSize()[0], gridMap.getSize()[1]});
+    OcclusionInpainter::gridMapLayerToTensor(gridMap, "occ_mask", occMaskTensor);
 
-    /*
-    // Create a vector of inputs.
+    // assemble inputs
+    torch::Tensor inputTensor = torch::cat({occGridMapTensor, occMaskTensor}, 1);
+
+    // send torch tensors to device
+    inputTensor = inputTensor.to(device);
+
+    // assemble forward function inputs
     std::vector<torch::jit::IValue> inputs;
-    inputs.push_back(torch::ones({1, 3, 224, 224}));
+    inputs.push_back(inputTensor);
 
     // Execute the model and turn its output into a tensor.
-    at::Tensor output = module.forward(inputs).toTensor();
-    std::cout << output.slice(1,  0, 5) << '\n';
-    */
+    torch::Tensor outputs = module_.forward(inputs).toTensor();
+    // std::cout << outputs.slice(1,  0, 5) << '\n';
 
-    // at::Tensor output = predictor_.forward(inputs).toTensor().to(at::kCPU);
+    // Slice tensor to (h x w) (remove batch and channel dimensions)
+    torch::Tensor recGridMapTensor = outputs.index({0, 0, "..."});
+
+    OcclusionInpainter::tensorToGridMapLayer(recGridMapTensor, "norm_rec_grid_map", gridMap);
 
     // denormalization of output
     gridMap["rec_grid_map"] = gridMap["norm_rec_grid_map"].array() + grid_map_mean;
