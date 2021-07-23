@@ -142,6 +142,10 @@ bool OcclusionInpainter::loadNeuralNetworkModel() {
 }
 
 bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap gridMap) {
+    // number of rows and cols
+    int rows = gridMap.getSize()[0];
+    int cols = gridMap.getSize()[1];
+
     // normalization of input
     double grid_map_mean = gridMap["occ_grid_map"].meanOfFinites();
     gridMap["norm_occ_grid_map"] = gridMap["occ_grid_map"].array() - grid_map_mean;
@@ -150,13 +154,36 @@ bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap gridMap) {
     torch::Device device(torch::cuda::is_available() ? torch::kCUDA : torch::kCPU);
 
     // init torch tensors
-    auto occGridMapTensor = torch::rand({1, 1, gridMap.getSize()[0], gridMap.getSize()[1]});
+    auto occGridMapTensor = torch::rand({1, 1, rows, cols});
     OcclusionInpainter::gridMapLayerToTensor(gridMap, "norm_occ_grid_map", occGridMapTensor);
-    auto occMaskTensor = torch::rand({1, 1, gridMap.getSize()[0], gridMap.getSize()[1]});
+    auto occMaskTensor = torch::rand({1, 1, rows, cols});
     OcclusionInpainter::gridMapLayerToTensor(gridMap, "occ_mask", occMaskTensor);
 
     // assemble inputs
     torch::Tensor inputTensor = torch::cat({occGridMapTensor, occMaskTensor}, 1);
+
+    int subgridRows = subgridRows_;
+    int subgridCols = subgridCols_;
+    if (!divideIntoSubgrids_) {
+        subgridRows = rows;
+        subgridCols = cols;
+    }
+
+    int start_row_idx = 0;
+    int start_col_idx = 0;
+    int stop_row_idx = subgridRows;
+    int stop_col_idx = subgridCols;
+    while (stop_row_idx < rows) {
+        while (stop_col_idx < cols) {
+            subgridInputTensor 
+
+            
+            start_col_idx += subgridCols;
+            stop_col_idx += subgridCols;
+        }
+        start_row_idx += subgridRows;
+        stop_row_idx += subgridRows;
+    }
 
     // send torch tensors to device
     inputTensor = inputTensor.to(device);

@@ -43,7 +43,7 @@ class OcclusionInpainter
         */
         virtual ~OcclusionInpainter();
 
-        // Parameters
+        /*** Parameters ***/
         int inpaint_method_ = 0; // Telea, Navier-Stokes or NN
         double inpaint_radius_ = 0.3; // inpaint radius for Telea, Navier-Stokes [m]
         double NaN_replacement_ = 0.; // replacement values for NaNs in occluded grid map before inputting into neural network
@@ -51,6 +51,11 @@ class OcclusionInpainter
         std::string inputLayer_ = "occ_grid_map";
 
         std::string neuralNetworkPath_ = "models/gonzen.pt";
+
+        // division into subgrids for NN inference
+        bool divideIntoSubgrids_ = false;
+        int subgridRows_ = -1;
+        int subgridCols_ = -1;
 
         // getters and setters
         void setOccGridMap(const grid_map::GridMap occGridMap);
