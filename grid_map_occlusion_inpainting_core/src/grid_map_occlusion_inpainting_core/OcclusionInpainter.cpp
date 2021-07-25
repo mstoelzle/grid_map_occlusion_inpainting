@@ -28,9 +28,10 @@ namespace gmoi = grid_map_occlusion_inpainting;
 
 namespace grid_map_occlusion_inpainting {
 
-OcclusionInpainter::OcclusionInpainter()
+OcclusionInpainter::OcclusionInpainter(int inpaintMethod, const std::string& inputLayer)
 {
-
+    inpaintMethod_ = inpaintMethod;
+    inputLayer_ = inputLayer;
 }
 
 OcclusionInpainter::~OcclusionInpainter()
@@ -54,12 +55,12 @@ grid_map::GridMap OcclusionInpainter::getGridMap()
 
 bool OcclusionInpainter::inpaintGridMap()
 {
-    if (inpaint_method_ == gmoi::INPAINT_NS || inpaint_method_ == gmoi::INPAINT_TELEA)
+    if (inpaintMethod_ == gmoi::INPAINT_NS || inpaintMethod_ == gmoi::INPAINT_TELEA)
     {
         if (!inpaintOpenCV(gridMap_)){
             return false;
         }
-    } else if (inpaint_method_ == gmoi::INPAINT_NN) {
+    } else if (inpaintMethod_ == gmoi::INPAINT_NN) {
         #if USE_TORCH
             if (!inpaintNeuralNetwork(gridMap_)){
                 return false;
@@ -90,7 +91,7 @@ bool OcclusionInpainter::inpaintOpenCV(grid_map::GridMap gridMap) {
     grid_map::GridMapCvConverter::toImage<unsigned char, 1>(gridMap, "occ_mask", CV_8UC1, maskImage);
 
     const double radiusInPixels = inpaint_radius_ / gridMap.getResolution();
-    cv::inpaint(occImage, maskImage, recImage, radiusInPixels, inpaint_method_);
+    cv::inpaint(occImage, maskImage, recImage, radiusInPixels, inpaintMethod_);
 
     grid_map::GridMapCvConverter::addLayerFromImage<unsigned char, 3>(recImage, "rec_grid_map", gridMap, minValue, maxValue);
 
