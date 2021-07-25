@@ -56,6 +56,8 @@ class OcclusionInpainter
         bool divideIntoSubgrids_ = false;
         int subgridRows_ = -1;
         int subgridCols_ = -1;
+        // We only run inference on subgrids with less than x% occlusion, otherwise we use the occluded input subgrid
+        float subgridMaxOccRatioThresh_ = 1.;
 
         // getters and setters
         void setOccGridMap(const grid_map::GridMap occGridMap);
