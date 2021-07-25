@@ -71,7 +71,7 @@ class OcclusionInpainter
         static double getOccRatio(const grid_map::GridMap& gridMap){
             int nocc_cells = gridMap["occ_mask"].numberOfFinites();
             int total_cells = gridMap.getSize()[0] *  gridMap.getSize()[1];
-            double occ_ratio = 1 - nocc_cells / total_cells;
+            double occ_ratio = 1 - nocc_cells / ((double) total_cells);
             return occ_ratio;
         }
 
