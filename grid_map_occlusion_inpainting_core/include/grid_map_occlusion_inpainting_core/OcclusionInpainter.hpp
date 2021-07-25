@@ -63,8 +63,29 @@ class OcclusionInpainter
 
         // logic functions
         bool inpaintGridMap();
-        void addOccMask();
-        void addCompLayer();
+
+        static void addOccMask(grid_map::GridMap& gridMap, const std::string& layer) {
+            gridMap.add("occ_mask", 0.0);
+            // mapOut.setBasicLayers(std::vector<std::string>());
+            for (grid_map::GridMapIterator iterator(gridMap); !iterator.isPastEnd(); ++iterator) {
+                if (!gridMap.isValid(*iterator, layer)) {
+                    gridMap.at("occ_mask", *iterator) = 1.0;
+                }
+            }
+        }
+
+        /* Add composed grid map */
+        static void addCompLayer(grid_map::GridMap& gridMap) {
+            gridMap.add("comp_grid_map", 0.0);
+            // mapOut.setBasicLayers(std::vector<std::string>());
+            for (grid_map::GridMapIterator iterator(gridMap); !iterator.isPastEnd(); ++iterator) {
+                if (gridMap.at("occ_mask", *iterator) == 1.0) {
+                    gridMap.at("comp_grid_map", *iterator) = gridMap.at("rec_grid_map", *iterator);
+                } else {
+                    gridMap.at("comp_grid_map", *iterator) = gridMap.at("occ_grid_map", *iterator);
+                }
+            }
+        }
 
         // static helper methods
         /* get ratio of occluded cells */
@@ -99,7 +120,15 @@ class OcclusionInpainter
         bool inpaintOpenCV(grid_map::GridMap gridMap);
 
         // helper methods
-        void replaceNaNs(grid_map::GridMap gridMap, const std::string& inputLayer, const std::string& outputLayer);
+
+        void replaceNaNs(grid_map::GridMap gridMap, const std::string& inputLayer, const std::string& outputLayer) {
+            gridMap[outputLayer] = gridMap[inputLayer];
+            for (grid_map::GridMapIterator iterator(gridMap); !iterator.isPastEnd(); ++iterator) {
+                if (!gridMap.isValid(*iterator, inputLayer)) {
+                    gridMap.at(outputLayer, *iterator) = NaN_replacement_;
+                }
+            }
+        }
 
         // libtorch
         #if USE_TORCH

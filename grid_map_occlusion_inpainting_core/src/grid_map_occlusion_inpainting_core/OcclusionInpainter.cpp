@@ -43,7 +43,7 @@ void OcclusionInpainter::setOccGridMap(const grid_map::GridMap occGridMap)
     gridMap_ = occGridMap;
 
     gridMap_["occ_grid_map"] = gridMap_[inputLayer_];
-    addOccMask();
+    OcclusionInpainter::addOccMask(gridMap_, inputLayer_);
 }
 
 grid_map::GridMap OcclusionInpainter::getGridMap()
@@ -51,37 +51,6 @@ grid_map::GridMap OcclusionInpainter::getGridMap()
     return gridMap_;
 }
 
-void OcclusionInpainter::addOccMask() {
-    gridMap_.add("occ_mask", 0.0);
-    // mapOut.setBasicLayers(std::vector<std::string>());
-    for (grid_map::GridMapIterator iterator(gridMap_); !iterator.isPastEnd(); ++iterator) {
-        if (!gridMap_.isValid(*iterator, inputLayer_)) {
-            gridMap_.at("occ_mask", *iterator) = 1.0;
-        }
-    }
-}
-
-/* Add composed grid map */
-void OcclusionInpainter::addCompLayer() {
-    gridMap_.add("comp_grid_map", 0.0);
-    // mapOut.setBasicLayers(std::vector<std::string>());
-    for (grid_map::GridMapIterator iterator(gridMap_); !iterator.isPastEnd(); ++iterator) {
-        if (gridMap_.at("occ_mask", *iterator) == 1.0) {
-            gridMap_.at("comp_grid_map", *iterator) = gridMap_.at("rec_grid_map", *iterator);
-        } else {
-            gridMap_.at("comp_grid_map", *iterator) = gridMap_.at("occ_grid_map", *iterator);
-        }
-    }
-}
-
-void OcclusionInpainter::replaceNaNs(grid_map::GridMap gridMap, const std::string& inputLayer, const std::string& outputLayer) {
-    gridMap[outputLayer] = gridMap[inputLayer];
-    for (grid_map::GridMapIterator iterator(gridMap); !iterator.isPastEnd(); ++iterator) {
-        if (!gridMap.isValid(*iterator, inputLayer)) {
-            gridMap.at(outputLayer, *iterator) = NaN_replacement_;
-        }
-    }
-}
 
 bool OcclusionInpainter::inpaintGridMap()
 {
@@ -102,7 +71,7 @@ bool OcclusionInpainter::inpaintGridMap()
         throw std::invalid_argument("The chosen inpaint method is not implemented." );
     }
 
-    addCompLayer();
+     OcclusionInpainter::addCompLayer(gridMap_);
 
     return true;
 }
