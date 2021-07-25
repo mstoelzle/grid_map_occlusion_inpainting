@@ -6,6 +6,7 @@
  *      Author: Maximilian Stoelzle
  *	 Institute: ETH Zurich
  */
+#include <cmath>
 
 #include "grid_map_occlusion_inpainting_core/OcclusionInpainter.hpp"
 
@@ -157,9 +158,9 @@ bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap gridMap) {
     torch::Device device(torch::cuda::is_available() ? torch::kCUDA : torch::kCPU);
 
     // init torch tensors
-    auto occGridMapTensor = torch::rand({1, 1, rows, cols});
+    auto occGridMapTensor = torch::zeros({1, 1, rows, cols});
     OcclusionInpainter::gridMapLayerToTensor(gridMap, "nn_input_grid_map", occGridMapTensor);
-    auto occMaskTensor = torch::rand({1, 1, rows, cols});
+    auto occMaskTensor = torch::zeros({1, 1, rows, cols});
     OcclusionInpainter::gridMapLayerToTensor(gridMap, "occ_mask", occMaskTensor);
 
     // assemble channels
@@ -172,6 +173,9 @@ bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap gridMap) {
         subgridRows = rows;
         subgridCols = cols;
     }
+    // the implementation currently only works if our reconstructed grid map has the same width and length than the occluded
+    assert(rows % subgridRows == 0);
+    assert(cols % subgridCols == 0);
     int numSubgrids = (rows / subgridRows) * (cols / subgridCols);
 
     auto inputTensorBatch = torch::rand({numSubgrids, inputTensorUnsplit.sizes()[1], subgridRows, subgridCols});
@@ -222,10 +226,34 @@ bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap gridMap) {
     torch::Tensor outputs = module_.forward(inputs).toTensor();
     // std::cout << outputs.slice(1,  0, 5) << '\n';
 
-    // Slice tensor to (h x w) (remove batch and channel dimensions)
-    torch::Tensor recGridMapTensor = outputs.index({0, 0, "..."});
+    // row-major disassembly of subgrids from batch into complete grid map
+    auto recGridMapTensor = torch::zeros({rows, cols});
+    subgrid_idx = 0;
+    start_row_idx = 0;
+    start_col_idx = 0;
+    stop_row_idx = subgridRows;
+    stop_col_idx = subgridCols;
+    while (stop_row_idx < rows) {
+        while (stop_col_idx < cols) {
+            auto rowSlice = torch::indexing::Slice(start_row_idx, stop_row_idx, 1);
+            auto colSlice = torch::indexing::Slice(start_col_idx, stop_col_idx, 1);
+            if (!std::isnan(subgridMeans[subgrid_idx])) {
+                // we ran inference for this subgrid
+                recGridMapTensor.index_put_({rowSlice, colSlice}, outputs.index({subgrid_idx, 0, rowSlice, colSlice}) + subgridMeans[subgrid_idx]);
+                subgrid_idx += 1;
+            } else {
+                // we didn't run inference for this subgrid
+                recGridMapTensor.index_put_({rowSlice, colSlice}, occGridMapTensor.index({subgrid_idx, 0, rowSlice, colSlice}));
+            }
 
-    OcclusionInpainter::tensorToGridMapLayer(recGridMapTensor, "norm_rec_grid_map", gridMap);
+            start_col_idx += subgridCols;
+            stop_col_idx += subgridCols;
+        }
+        start_row_idx += subgridRows;
+        stop_row_idx += subgridRows;
+    }
+
+    OcclusionInpainter::tensorToGridMapLayer(recGridMapTensor, "rec_grid_map", gridMap);
 
     // denormalization of output
     // gridMap["rec_grid_map"] = gridMap["norm_rec_grid_map"].array() + grid_map_mean;
