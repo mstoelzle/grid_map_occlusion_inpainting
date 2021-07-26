@@ -83,9 +83,8 @@ class OcclusionInpainter
         }
 
         /* Add composed grid map */
-        static void addCompLayer(grid_map::GridMap& gridMap) {
+        static void addCompLayer(grid_map::GridMap gridMap) {
             gridMap.add("comp_grid_map", 0.0);
-            // mapOut.setBasicLayers(std::vector<std::string>());
             for (grid_map::GridMapIterator iterator(gridMap); !iterator.isPastEnd(); ++iterator) {
                 if (gridMap.at("occ_mask", *iterator) == 1.0) {
                     gridMap.at("comp_grid_map", *iterator) = gridMap.at("rec_grid_map", *iterator);

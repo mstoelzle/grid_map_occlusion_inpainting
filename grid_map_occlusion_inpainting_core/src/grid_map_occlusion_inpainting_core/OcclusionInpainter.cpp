@@ -106,6 +106,7 @@ bool OcclusionInpainter::inpaintOpenCV(grid_map::GridMap gridMap) {
     const double radiusInPixels = inpaintRadius_ / gridMap.getResolution();
     cv::inpaint(occImage, maskImage, recImage, radiusInPixels, inpaintMethod_);
 
+    gridMap.add("rec_grid_map", 0.0);
     grid_map::GridMapCvConverter::addLayerFromImage<unsigned char, 3>(recImage, "rec_grid_map", gridMap, minValue, maxValue);
 
     return true;
