@@ -51,7 +51,7 @@ Visualization Manager:
       Min Intensity: 0
       Name: GridMap
       Show Grid Lines: true
-      Topic: /occlusion_inpainting_node/rec_grid_map
+      Topic: /grid_map_occlusion_inpainting/rec_grid_map
       Unreliable: false
       Use Rainbow: true
       Value: false
