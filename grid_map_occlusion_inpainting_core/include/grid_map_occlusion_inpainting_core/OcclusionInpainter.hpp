@@ -50,6 +50,10 @@ class OcclusionInpainter
         double inpaint_radius_ = 0.3; // inpaint radius for Telea, Navier-Stokes [m]
         double NaN_replacement_ = 0.; // replacement values for NaNs in occluded grid map before inputting into neural network
 
+        // resizing of grid map prior to inference
+        bool resize_ = false;
+        double targetResolution_ = 0.085333333; // [m/px] resize in example from 300x300px with resolution of 0.1m/px to 256x256px 
+
         std::string neuralNetworkPath_ = "models/gonzen.pt";
 
         // division into subgrids for NN inference
@@ -116,6 +120,7 @@ class OcclusionInpainter
 
     protected:
         // Grid maps
+        grid_map::GridMap inputGridMap_;
         grid_map::GridMap gridMap_;
 
         // inpainting methods

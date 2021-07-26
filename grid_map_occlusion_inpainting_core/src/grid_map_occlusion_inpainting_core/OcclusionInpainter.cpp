@@ -11,7 +11,9 @@
 #include "grid_map_occlusion_inpainting_core/OcclusionInpainter.hpp"
 
 #include <grid_map_core/grid_map_core.hpp>
+#include <grid_map_cv/grid_map_cv.hpp>
 #include <grid_map_cv/GridMapCvConverter.hpp>
+#include <grid_map_cv/GridMapCvProcessing.hpp>
 
 #include <Eigen/Dense>
 
@@ -41,7 +43,13 @@ OcclusionInpainter::~OcclusionInpainter()
 
 void OcclusionInpainter::setOccGridMap(const grid_map::GridMap occGridMap)
 {
-    gridMap_ = occGridMap;
+    inputGridMap_ = occGridMap;
+
+    if (resize_) {
+        grid_map::GridMapCvProcessing::changeResolution(occGridMap, gridMap_, targetResolution_);
+    } else {
+        gridMap_ = occGridMap;
+    }
 
     gridMap_["occ_grid_map"] = gridMap_[inputLayer_];
     OcclusionInpainter::addOccMask(gridMap_, inputLayer_);
