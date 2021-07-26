@@ -54,7 +54,11 @@ void OcclusionInpaintingNode::configure() {
   nodeHandle_.param<double>("subgrids/subgrid_max_occ_ratio_thresh", occInpainter_.subgridMaxOccRatioThresh_, 1.);
 
   if (occInpainter_.inpaintMethod_ == gmoi::INPAINT_NN) {
-    occInpainter_.loadNeuralNetworkModel();
+    #if USE_TORCH
+      occInpainter_.loadNeuralNetworkModel();
+    #else
+      throw std::invalid_argument("The occlusion inpainting node was compiled without libtorch / PyTorch support." );
+    #endif
   }
 }
 
