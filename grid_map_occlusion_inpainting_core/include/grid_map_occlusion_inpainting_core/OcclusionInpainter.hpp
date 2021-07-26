@@ -66,7 +66,7 @@ class OcclusionInpainter
         double subgridMaxOccRatioThresh_ = 1.;
 
         // getters and setters
-        void setOccGridMap(const grid_map::GridMap occGridMap);
+        void setOccGridMap(const grid_map::GridMap& occGridMap);
         grid_map::GridMap getGridMap();
 
         // logic functions
@@ -83,7 +83,7 @@ class OcclusionInpainter
         }
 
         /* Add composed grid map */
-        static void addCompLayer(grid_map::GridMap gridMap) {
+        static void addCompLayer(grid_map::GridMap& gridMap) {
             gridMap.add("comp_grid_map", 0.0);
             for (grid_map::GridMapIterator iterator(gridMap); !iterator.isPastEnd(); ++iterator) {
                 if (gridMap.at("occ_mask", *iterator) == 1.0) {
@@ -125,11 +125,11 @@ class OcclusionInpainter
         grid_map::GridMap gridMap_;
 
         // inpainting methods
-        bool inpaintOpenCV(grid_map::GridMap gridMap);
+        bool inpaintOpenCV(grid_map::GridMap& gridMap);
 
         // helper methods
 
-        void replaceNaNs(grid_map::GridMap gridMap, const std::string& inputLayer, const std::string& outputLayer) {
+        void replaceNaNs(grid_map::GridMap& gridMap, const std::string& inputLayer, const std::string& outputLayer) {
             gridMap[outputLayer] = gridMap[inputLayer];
             for (grid_map::GridMapIterator iterator(gridMap); !iterator.isPastEnd(); ++iterator) {
                 if (!gridMap.isValid(*iterator, inputLayer)) {
@@ -143,7 +143,7 @@ class OcclusionInpainter
             // libtorch attributes
             torch::jit::script::Module module_;
 
-            bool inpaintNeuralNetwork(grid_map::GridMap gridMap);
+            bool inpaintNeuralNetwork(grid_map::GridMap& gridMap);
         
             /* static torch::Tensor eigenVectorToTorchTensor(Eigen::VectorXd e){
                 auto t = torch::rand({e.rows()});
