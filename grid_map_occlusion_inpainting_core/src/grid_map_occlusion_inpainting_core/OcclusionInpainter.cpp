@@ -51,7 +51,7 @@ void OcclusionInpainter::setOccGridMap(const grid_map::GridMap occGridMap)
         gridMap_ = occGridMap;
     }
 
-    gridMap_["occ_grid_map"] = gridMap_[inputLayer_];
+    gridMap_.add("occ_grid_map" ,gridMap_[inputLayer_]);
     OcclusionInpainter::addOccMask(gridMap_, inputLayer_);
 }
 
