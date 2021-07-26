@@ -1,24 +1,26 @@
-occ_grid_map_topic: "occ_grid_map" # topic of input grid maps
-rec_grid_map_topic: "rec_grid_map" # topic of output grid maps
+grid_map_occlusion_inpainting: {
+  occ_grid_map_topic: "occ_grid_map" # topic of input grid maps
+  rec_grid_map_topic: "rec_grid_map" # topic of output grid maps
 
-inpaint_method: 0 # Telea, Navier-Stokes or NN
-input_layer: "occ_grid_map" # in which layer of the GridMap object is the occluded DEM stored
+  inpaint_method: 0 # Telea, Navier-Stokes or NN
+  input_layer: "occ_grid_map" # in which layer of the GridMap object is the occluded DEM stored
 
-resizing: {
-  resize: false,
-  target_resolution: 0.1
-}
+  resizing: {
+    resize: false,
+    target_resolution: 0.1
+  }
 
-# OpenCV parameters
-inpaint_radius: 0.3
+  # OpenCV parameters
+  inpaint_radius: 0.3
 
-# neural network parameters
-neural_network_path: "models/gonzen.pt"
-NaN_replacement: 0.0
+  # neural network parameters
+  neural_network_path: "models/gonzen.pt"
+  NaN_replacement: 0.0
 
-subgrids: {
-  divide_into_subgrids: false,
-  subgrid_rows: -1,
-  subgrid_cols: -1,
-  subgrid_max_occ_ratio_thresh: 1.
+  subgrids: {
+    divide_into_subgrids: false,
+    subgrid_rows: -1,
+    subgrid_cols: -1,
+    subgrid_max_occ_ratio_thresh: 1.
+  }
 }
