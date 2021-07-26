@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package format="2">
+<package format="3">
   <name>grid_map_occlusion_inpainting_core</name>
   <version>0.0.0</version>
   <description>ROS package for the inpainting of grid maps through OpenCV and neural network methods</description>
