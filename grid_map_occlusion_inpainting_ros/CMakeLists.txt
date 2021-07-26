@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.5.1)
 project(grid_map_occlusion_inpainting_ros)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
+# add_compile_options(-std=c++11)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS} -std=c++14 -fopenmp")
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -13,6 +14,17 @@ find_package(catkin REQUIRED COMPONENTS
   grid_map_core
   grid_map_ros
 )
+
+# Find PyTorch
+find_package(Torch)
+if (Torch_FOUND)
+  add_definitions(-DUSE_TORCH=1)
+  message("Compiling with Torch support")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
+else()
+  add_definitions(-DUSE_TORCH=0)
+  message("Compiling without Torch support")
+endif()
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -115,6 +127,11 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
 )
+if (torch_FOUND)
+  include_directories(
+    ${TORCH_INCLUDE_DIRS}
+  )
+endif()
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
@@ -144,6 +161,7 @@ add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catk
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_node
   ${catkin_LIBRARIES}
+  ${TORCH_LIBRARIES}
 )
 
 #############
