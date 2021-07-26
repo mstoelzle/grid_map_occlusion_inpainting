@@ -44,7 +44,7 @@ class OcclusionInpainter
         virtual ~OcclusionInpainter();
 
         /*** Parameters ***/
-        int inpaintMethod_; // Telea, Navier-Stokes or NN
+        int inpaintMethod_; // Navier-Stokes, Telea or NN
         std::string inputLayer_;
 
         // resizing of grid map prior to inference
