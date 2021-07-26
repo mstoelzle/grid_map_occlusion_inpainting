@@ -1,0 +1,21 @@
+inpaint_method: 2 # Telea, Navier-Stokes or NN
+input_layer: "occ_grid_map" # in which layer of the GridMap object is the occluded DEM stored
+
+resizing: {
+  resize: true,
+  target_resolution: 0.085333333
+}
+
+# OpenCV parameters
+inpaint_radius: 0.3
+
+# neural network parameters
+neural_network_path: "models/gonzen.pt"
+NaN_replacement: 0.0
+
+subgrids: {
+  divide_into_subgrids: true,
+  subgrid_rows: 64,
+  subgrid_cols: 64,
+  subgrid_max_occ_ratio_thresh: 0.85
+}
