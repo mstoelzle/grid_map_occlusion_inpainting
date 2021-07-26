@@ -1,7 +1,8 @@
 <launch>
-
+  <arg name="config_file" default="default.yaml" />
   <arg name="launch_rviz" default="true" />
-  <rosparam file="$(find grid_map_occlusion_inpainting_ros)/config/default.yaml" />
+
+  <rosparam file="$(find grid_map_occlusion_inpainting_ros)/config/$(arg config_file)" />
 
   <!-- Launch the grid map iterators demo node -->
   <node pkg="grid_map_occlusion_inpainting_ros" type="node" name="grid_map_occlusion_inpainting" output="screen" launch-prefix=""></node>

@@ -48,5 +48,5 @@ rosrun grid_map_occlusion_inpainting_ros node
 ```
 with rviz visualization of grid map:
 ```bash
-roslaunch grid_map_occlusion_inpainting_ros occlusion_inpainting.launch
+roslaunch grid_map_occlusion_inpainting_ros occlusion_inpainting.launch config_file:=solving_occlusion.yaml
 ```
