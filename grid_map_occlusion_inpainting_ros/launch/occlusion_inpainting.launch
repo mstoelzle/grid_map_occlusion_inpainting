@@ -4,7 +4,7 @@
   <rosparam file="$(find grid_map_occlusion_inpainting_ros)/config/default.yaml" />
 
   <!-- Launch the grid map iterators demo node -->
-  <node pkg="grid_map_occlusion_inpainting_ros" type="node" name="occlusion_inpainting_node" output="screen" launch-prefix=""></node>
+  <node pkg="grid_map_occlusion_inpainting_ros" type="node" name="node" output="screen" launch-prefix=""></node>
 
   <!-- Launch RViz with the demo configuration -->
   <node name="rviz" pkg="rviz" type="rviz"

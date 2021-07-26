@@ -6,7 +6,7 @@ Create catkin workspace directory at `~/catkin_ws` and clone repository into `~/
 
 ### Install Dependencies
 ```bash
-rosdep install -y --from-paths src --rosdistro noetic
+rosdep install -y --from-paths src --rosdistro noetic --skip-keys grid_map_occlusion_inpainting_core
 ```
 
 ### Install PyTorch for C++ #####
