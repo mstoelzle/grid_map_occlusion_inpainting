@@ -50,7 +50,7 @@
   <!--   <doc_depend>doxygen</doc_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
 
-  <depend>pkg_config</depend>
+  <!--  <depend>pkg_config</depend> -->
   <build_depend>roscpp</build_depend>
   <build_depend>grid_map_occlusion_inpainting_core</build_depend>
   <build_depend>grid_map_core</build_depend>
