@@ -22,6 +22,8 @@ class OcclusionInpaintingNode
         OcclusionInpaintingNode(ros::NodeHandle& nodeHandle);
         ~OcclusionInpaintingNode();
 
+        void configure();
+
         /*!
         * Callback function for the point cloud 2.
         * @param message the point cloud2 message to be converted to a grid map msg

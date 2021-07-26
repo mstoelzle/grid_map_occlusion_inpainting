@@ -103,7 +103,7 @@ bool OcclusionInpainter::inpaintOpenCV(grid_map::GridMap gridMap) {
     grid_map::GridMapCvConverter::toImage<unsigned char, 3>(gridMap, "occ_grid_map", CV_8UC3, minValue, maxValue, occImage);
     grid_map::GridMapCvConverter::toImage<unsigned char, 1>(gridMap, "occ_mask", CV_8UC1, maskImage);
 
-    const double radiusInPixels = inpaint_radius_ / gridMap.getResolution();
+    const double radiusInPixels = inpaintRadius_ / gridMap.getResolution();
     cv::inpaint(occImage, maskImage, recImage, radiusInPixels, inpaintMethod_);
 
     grid_map::GridMapCvConverter::addLayerFromImage<unsigned char, 3>(recImage, "rec_grid_map", gridMap, minValue, maxValue);
@@ -180,7 +180,7 @@ bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap gridMap) {
             // computation of occusion ratio for subgrid
             int noccSubgridCells = torch::sum(subgridNoccSelector).item<int>();
             int totalSubgridCells = subgridRows * subgridCols;
-            float occRatio = 1 - noccSubgridCells / ((float) totalSubgridCells);
+            float occRatio = 1 - noccSubgridCells / ((double) totalSubgridCells);
             
             if (occRatio <= subgridMaxOccRatioThresh_) {
                 // normalization of subgrid

@@ -52,7 +52,7 @@ class OcclusionInpainter
         double targetResolution_ = 0.1; // [m/px] resize in example from 300x300px with resolution of 0.1m/px to 256x256px 
 
         // OpenCV parameters
-        double inpaint_radius_ = 0.3; // inpaint radius for Telea, Navier-Stokes [m]
+        double inpaintRadius_ = 0.3; // inpaint radius for Telea, Navier-Stokes [m]
 
         // neural network parameters
         std::string neuralNetworkPath_ = "models/gonzen.pt";
@@ -63,7 +63,7 @@ class OcclusionInpainter
         int subgridRows_ = -1;
         int subgridCols_ = -1;
         // We only run inference on subgrids with less than x% occlusion, otherwise we use the occluded input subgrid
-        float subgridMaxOccRatioThresh_ = 1.;
+        double subgridMaxOccRatioThresh_ = 1.;
 
         // getters and setters
         void setOccGridMap(const grid_map::GridMap occGridMap);

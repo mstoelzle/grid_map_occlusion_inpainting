@@ -1,3 +1,6 @@
+occ_grid_map_topic: "occ_grid_map" # topic of input grid maps
+rec_grid_map_topic: "rec_grid_map" # topic of output grid maps
+
 inpaint_method: 2 # Telea, Navier-Stokes or NN
 input_layer: "occ_grid_map" # in which layer of the GridMap object is the occluded DEM stored
 
