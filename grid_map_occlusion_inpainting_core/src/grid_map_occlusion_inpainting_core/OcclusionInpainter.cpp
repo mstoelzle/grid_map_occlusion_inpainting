@@ -80,7 +80,12 @@ bool OcclusionInpainter::inpaintGridMap()
         throw std::invalid_argument("The chosen inpaint method is not implemented." );
     }
 
-     OcclusionInpainter::addCompLayer(gridMap_);
+    OcclusionInpainter::addCompLayer(gridMap_);
+
+    /*
+    std::vector<std::string> basicLayers = {"rec_grid_map", "comp_grid_map"};
+    gridMap_.setBasicLayers(basicLayers);
+    */
 
     return true;
 }
