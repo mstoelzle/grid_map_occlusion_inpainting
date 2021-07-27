@@ -144,6 +144,11 @@ class OcclusionInpainter
             // libtorch attributes
             torch::jit::script::Module module_;
 
+            static torch::Device getDevice(){
+                torch::Device device(torch::cuda::is_available() ? torch::kCUDA : torch::kCPU);
+                return device;
+            }
+
             bool inpaintNeuralNetwork(grid_map::GridMap& gridMap);
         
             /* static torch::Tensor eigenVectorToTorchTensor(Eigen::VectorXd e){

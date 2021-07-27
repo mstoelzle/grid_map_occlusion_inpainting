@@ -117,6 +117,9 @@ bool OcclusionInpainter::loadNeuralNetworkModel() {
     try {
         // Deserialize the ScriptModule from a file using torch::jit::load().
         module_ = torch::jit::load(neuralNetworkPath_);
+
+        torch::Device device = OcclusionInpainter::getDevice();
+        module_.to(device);
     }
     catch (const c10::Error& e) {
         throw std::runtime_error("Could not load the neural network model");
@@ -139,7 +142,7 @@ bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap& gridMap) {
     gridMap["norm_occ_grid_map"] = gridMap["occ_grid_map"].array() - grid_map_mean; */
 
     // torch device
-    torch::Device device(torch::cuda::is_available() ? torch::kCUDA : torch::kCPU);
+    torch::Device device = OcclusionInpainter::getDevice();
 
     // init torch tensors
     auto occGridMapTensor = torch::zeros({1, 1, rows, cols});
