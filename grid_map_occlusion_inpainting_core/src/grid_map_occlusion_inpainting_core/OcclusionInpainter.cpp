@@ -231,7 +231,7 @@ bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap& gridMap) {
             auto colSlice = torch::indexing::Slice(start_col_idx, stop_col_idx, 1);
             if (!std::isnan(subgridMeans[subgrid_idx])) {
                 // we ran inference for this subgrid
-                recGridMapTensor.index_put_({rowSlice, colSlice}, outputs.index({subgrid_idx, 0, rowSlice, colSlice}) + subgridMeans[subgrid_idx]);
+                recGridMapTensor.index_put_({rowSlice, colSlice}, outputs.index({subgrid_idx, 0, "..."}) + subgridMeans[subgrid_idx]);
                 subgrid_idx += 1;
             } else {
                 // we didn't run inference for this subgrid
