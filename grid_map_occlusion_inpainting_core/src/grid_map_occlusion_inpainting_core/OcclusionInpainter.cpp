@@ -179,7 +179,7 @@ bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap& gridMap) {
             auto rowSlice = torch::indexing::Slice(start_row_idx, stop_row_idx, 1);
             auto colSlice = torch::indexing::Slice(start_col_idx, stop_col_idx, 1);
             torch::Tensor inputTensorSubgrid = inputTensorUnsplit.index({"...", rowSlice, colSlice});
-            auto subgridNoccSelector = torch::eq(inputTensorSubgrid.index({torch::indexing::Slice(), torch::indexing::Slice(1,2,1), "..."}), 0);
+            auto subgridNoccSelector = torch::eq(inputTensorSubgrid.index({0, 1, "..."}), 0);
 
             // computation of occusion ratio for subgrid
             int noccSubgridCells = torch::sum(subgridNoccSelector).item<int>();
@@ -188,9 +188,9 @@ bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap& gridMap) {
             
             if (occRatio <= subgridMaxOccRatioThresh_) {
                 // normalization of subgrid
-                auto subgridMean = torch::mean(inputTensorSubgrid.index({subgridNoccSelector})).item<float>();
+                auto subgridMean = torch::mean(inputTensorSubgrid.index({0, 0, subgridNoccSelector})).item<float>();
                 subgridMeans.push_back(subgridMean);
-                inputTensorSubgrid.index_put_({subgridNoccSelector}, inputTensorSubgrid.index({subgridNoccSelector})-subgridMean);
+                inputTensorSubgrid.index_put_({0, 0, subgridNoccSelector}, inputTensorSubgrid.index({0, 0, subgridNoccSelector})-subgridMean);
 
                 // insert subgrid into batch
                 inputTensorBatch.index_put_({subgrid_idx, torch::indexing::Slice(), rowSlice, colSlice}, inputTensorSubgrid.index({"...", rowSlice, colSlice})); 
