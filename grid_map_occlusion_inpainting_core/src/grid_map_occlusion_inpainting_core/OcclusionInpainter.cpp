@@ -170,8 +170,8 @@ bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap& gridMap) {
     int subgrid_idx = 0;
     int batch_idx = 0;
     int start_row_idx = 0;
-    int start_col_idx = 0;
     int stop_row_idx = subgridRows;
+    int start_col_idx = 0;
     int stop_col_idx = subgridCols;
     
     // row-major assembly of subgrids into batch
@@ -207,6 +207,8 @@ bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap& gridMap) {
         }
         start_row_idx += subgridRows;
         stop_row_idx += subgridRows;
+        start_col_idx = 0;
+        stop_col_idx = subgridCols;
     }
     // we only populated the first (subgrid_idx) subgrids
     int batchSize = batch_idx;
@@ -228,13 +230,14 @@ bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap& gridMap) {
     subgrid_idx = 0;
     batch_idx = 0;
     start_row_idx = 0;
-    start_col_idx = 0;
     stop_row_idx = subgridRows;
+    start_col_idx = 0;
     stop_col_idx = subgridCols;
     while (stop_row_idx <= rows) {
         auto rowSlice = torch::indexing::Slice(start_row_idx, stop_row_idx, 1);
         while (stop_col_idx <= cols) {
             auto colSlice = torch::indexing::Slice(start_col_idx, stop_col_idx, 1);
+
             if (!std::isnan(subgridMeans[subgrid_idx])) {
                 // we ran inference for this subgrid
                 auto denormalizedTensor = outputs.index({batch_idx, 0, rowSlice, colSlice}) + subgridMeans[subgrid_idx];
@@ -252,6 +255,8 @@ bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap& gridMap) {
         }
         start_row_idx += subgridRows;
         stop_row_idx += subgridRows;
+        start_col_idx = 0;
+        stop_col_idx = subgridCols;
     }
 
     OcclusionInpainter::tensorToGridMapLayer(recGridMapTensor, "rec_grid_map", gridMap);
