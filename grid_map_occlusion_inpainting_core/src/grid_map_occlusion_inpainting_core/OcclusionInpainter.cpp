@@ -137,10 +137,6 @@ bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap& gridMap) {
     // replace NaNs
     replaceNaNs(gridMap, "occ_grid_map", "nn_input_grid_map");
 
-    // normalization of input
-    /* double grid_map_mean = gridMap["occ_grid_map"].meanOfFinites();
-    gridMap["norm_occ_grid_map"] = gridMap["occ_grid_map"].array() - grid_map_mean; */
-
     // torch device
     torch::Device device = OcclusionInpainter::getDevice();
 
@@ -149,9 +145,13 @@ bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap& gridMap) {
     OcclusionInpainter::gridMapLayerToTensor(gridMap, "nn_input_grid_map", occGridMapTensor);
     auto occMaskTensor = torch::zeros({1, 1, rows, cols});
     OcclusionInpainter::gridMapLayerToTensor(gridMap, "occ_mask", occMaskTensor);
+    // we need to invert the occlusion mask
+    auto invOccMaskTensor = torch::zeros({1, 1, rows, cols});
+    invOccMaskTensor.index_put_({torch::eq(occMaskTensor, 0)}, 1);
+    invOccMaskTensor.index_put_({torch::eq(occMaskTensor, 1)}, 0);
 
     // assemble channels
-    torch::Tensor inputTensorUnsplit = torch::cat({occGridMapTensor, occMaskTensor}, 1);
+    torch::Tensor inputTensorUnsplit = torch::cat({occGridMapTensor, invOccMaskTensor}, 1);
 
     // division into subgrids
     int subgridRows = subgridRows_;
@@ -180,7 +180,7 @@ bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap& gridMap) {
         while (stop_col_idx <= cols) {
             auto colSlice = torch::indexing::Slice(start_col_idx, stop_col_idx, 1);
             torch::Tensor inputTensorSubgrid = inputTensorUnsplit.index({"...", rowSlice, colSlice});
-            auto subgridNoccSelector = torch::eq(inputTensorSubgrid.index({0, 1, "..."}), 0);
+            auto subgridNoccSelector = torch::eq(inputTensorSubgrid.index({0, 1, "..."}), 1);
 
             // computation of occusion ratio for subgrid
             int noccSubgridCells = torch::sum(subgridNoccSelector).item<int>();
