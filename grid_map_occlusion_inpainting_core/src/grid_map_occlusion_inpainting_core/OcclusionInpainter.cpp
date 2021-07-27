@@ -194,7 +194,7 @@ bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap& gridMap) {
                 inputTensorSubgrid.index_put_({0, 0, subgridNoccSelector}, inputTensorSubgrid.index({0, 0, subgridNoccSelector})-subgridMean);
 
                 // insert subgrid into batch
-                inputTensorBatchTmp.index_put_({batch_idx, torch::indexing::Slice(), rowSlice, colSlice}, inputTensorSubgrid.index({"...", rowSlice, colSlice})); 
+                inputTensorBatchTmp.index_put_({batch_idx, torch::indexing::Slice(), "..."}, inputTensorSubgrid);
 
                 batch_idx += 1;
             } else {
@@ -223,7 +223,6 @@ bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap& gridMap) {
 
     // Execute the model and turn its output into a tensor.
     torch::Tensor outputs = module_.forward(inputs).toTensor();
-    // std::cout << outputs.slice(1,  0, 5) << '\n';
 
     // row-major disassembly of subgrids from batch into complete grid map
     auto recGridMapTensor = torch::zeros({rows, cols});
@@ -240,7 +239,6 @@ bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap& gridMap) {
 
             if (!std::isnan(subgridMeans[subgrid_idx])) {
                 // we ran inference for this subgrid
-                auto denormalizedTensor = outputs.index({batch_idx, 0, rowSlice, colSlice}) + subgridMeans[subgrid_idx];
                 recGridMapTensor.index_put_({rowSlice, colSlice}, outputs.index({batch_idx, 0, "..."}) + subgridMeans[subgrid_idx]);
 
                 batch_idx += 1;
