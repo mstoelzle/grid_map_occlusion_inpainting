@@ -130,6 +130,7 @@ class OcclusionInpainter
         // helper methods
 
         void replaceNaNs(grid_map::GridMap& gridMap, const std::string& inputLayer, const std::string& outputLayer) {
+            gridMap.add(outputLayer, 0.0);
             gridMap[outputLayer] = gridMap[inputLayer];
             for (grid_map::GridMapIterator iterator(gridMap); !iterator.isPastEnd(); ++iterator) {
                 if (!gridMap.isValid(*iterator, inputLayer)) {
