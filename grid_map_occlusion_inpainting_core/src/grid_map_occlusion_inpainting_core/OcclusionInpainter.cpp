@@ -235,7 +235,7 @@ bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap& gridMap) {
                 subgrid_idx += 1;
             } else {
                 // we didn't run inference for this subgrid
-                recGridMapTensor.index_put_({rowSlice, colSlice}, occGridMapTensor.index({subgrid_idx, 0, rowSlice, colSlice}));
+                recGridMapTensor.index_put_({rowSlice, colSlice}, occGridMapTensor.index({0, 0, rowSlice, colSlice}));
             }
 
             start_col_idx += subgridCols;
