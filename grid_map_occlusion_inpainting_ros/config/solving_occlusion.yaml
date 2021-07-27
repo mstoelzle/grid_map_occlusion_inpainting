@@ -13,7 +13,7 @@ resizing: {
 inpaint_radius: 0.140625
 
 # neural network parameters
-neural_network_path: "models/gonzen_traced.pt"
+neural_network_path: "models/gonzen_traced.pt" # relative to package root
 NaN_replacement: 0.0
 
 subgrids: {

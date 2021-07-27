@@ -7,6 +7,7 @@
  */
 
 #include <ros/ros.h>
+#include <ros/package.h>
 
 #include <grid_map_core/GridMap.hpp>
 #include <grid_map_ros/GridMapRosConverter.hpp>
@@ -46,12 +47,16 @@ void OcclusionInpaintingNode::configure() {
   nodeHandle_.param<bool>("resizing/resize", occInpainter_.resize_, false);
   nodeHandle_.param<double>("resizing/target_resolution", occInpainter_.targetResolution_, 0.1);
   nodeHandle_.param<double>("inpaint_radius", occInpainter_.inpaintRadius_, 0.3);
-  nodeHandle_.param<std::string>("neural_network_path", occInpainter_.neuralNetworkPath_, "models/gonzen.pt");
   nodeHandle_.param<double>("NaN_replacement", occInpainter_.NaN_replacement_, 0.);
   nodeHandle_.param<bool>("subgrids/divide_into_subgrids", occInpainter_.divideIntoSubgrids_, false);
   nodeHandle_.param<int>("subgrids/subgrid_rows", occInpainter_.subgridRows_, 64);
   nodeHandle_.param<int>("subgrids/subgrid_cols", occInpainter_.subgridCols_, 64);
   nodeHandle_.param<double>("subgrids/subgrid_max_occ_ratio_thresh", occInpainter_.subgridMaxOccRatioThresh_, 1.);
+
+  std::string relNeuralNetworkPath;
+  nodeHandle_.param<std::string>("neural_network_path", relNeuralNetworkPath, "models/default.pt");
+  occInpainter_.neuralNetworkPath_ = ros::package::getPath("grid_map_occlusion_inpainting_core") + "/" + relNeuralNetworkPath;
+  ROS_INFO_STREAM(occInpainter_.neuralNetworkPath_);
 
   if (occInpainter_.inpaintMethod_ == gmoi::INPAINT_NN) {
     #if USE_TORCH
