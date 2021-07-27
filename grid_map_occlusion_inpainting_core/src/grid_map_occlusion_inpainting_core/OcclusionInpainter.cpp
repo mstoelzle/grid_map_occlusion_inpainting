@@ -165,18 +165,19 @@ bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap& gridMap) {
     assert(cols % subgridCols == 0);
     int numSubgrids = (rows / subgridRows) * (cols / subgridCols);
 
-    auto inputTensorBatch = torch::rand({numSubgrids, inputTensorUnsplit.sizes()[1], subgridRows, subgridCols});
+    auto inputTensorBatchTmp = torch::zeros({numSubgrids, inputTensorUnsplit.sizes()[1], subgridRows, subgridCols});
     std::vector<float> subgridMeans = {};
     int subgrid_idx = 0;
+    int batch_idx = 0;
     int start_row_idx = 0;
     int start_col_idx = 0;
     int stop_row_idx = subgridRows;
     int stop_col_idx = subgridCols;
     
     // row-major assembly of subgrids into batch
-    while (stop_row_idx < rows) {
-        while (stop_col_idx < cols) {
-            auto rowSlice = torch::indexing::Slice(start_row_idx, stop_row_idx, 1);
+    while (stop_row_idx <= rows) {
+        auto rowSlice = torch::indexing::Slice(start_row_idx, stop_row_idx, 1);
+        while (stop_col_idx <= cols) {
             auto colSlice = torch::indexing::Slice(start_col_idx, stop_col_idx, 1);
             torch::Tensor inputTensorSubgrid = inputTensorUnsplit.index({"...", rowSlice, colSlice});
             auto subgridNoccSelector = torch::eq(inputTensorSubgrid.index({0, 1, "..."}), 0);
@@ -193,19 +194,23 @@ bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap& gridMap) {
                 inputTensorSubgrid.index_put_({0, 0, subgridNoccSelector}, inputTensorSubgrid.index({0, 0, subgridNoccSelector})-subgridMean);
 
                 // insert subgrid into batch
-                inputTensorBatch.index_put_({subgrid_idx, torch::indexing::Slice(), rowSlice, colSlice}, inputTensorSubgrid.index({"...", rowSlice, colSlice})); 
+                inputTensorBatchTmp.index_put_({batch_idx, torch::indexing::Slice(), rowSlice, colSlice}, inputTensorSubgrid.index({"...", rowSlice, colSlice})); 
 
-                subgrid_idx += 1;
+                batch_idx += 1;
             } else {
                 subgridMeans.push_back((float) std::nan(""));
             }
 
+            subgrid_idx += 1;
             start_col_idx += subgridCols;
             stop_col_idx += subgridCols;
         }
         start_row_idx += subgridRows;
         stop_row_idx += subgridRows;
     }
+    // we only populated the first (subgrid_idx) subgrids
+    int batchSize = batch_idx;
+    torch::Tensor inputTensorBatch = inputTensorBatchTmp.index({torch::indexing::Slice(0, batchSize, 1), "..."});
 
     // send torch tensors to device
     torch::Tensor inputTensor = inputTensorBatch.to(device);
@@ -221,23 +226,27 @@ bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap& gridMap) {
     // row-major disassembly of subgrids from batch into complete grid map
     auto recGridMapTensor = torch::zeros({rows, cols});
     subgrid_idx = 0;
+    batch_idx = 0;
     start_row_idx = 0;
     start_col_idx = 0;
     stop_row_idx = subgridRows;
     stop_col_idx = subgridCols;
-    while (stop_row_idx < rows) {
-        while (stop_col_idx < cols) {
-            auto rowSlice = torch::indexing::Slice(start_row_idx, stop_row_idx, 1);
+    while (stop_row_idx <= rows) {
+        auto rowSlice = torch::indexing::Slice(start_row_idx, stop_row_idx, 1);
+        while (stop_col_idx <= cols) {
             auto colSlice = torch::indexing::Slice(start_col_idx, stop_col_idx, 1);
             if (!std::isnan(subgridMeans[subgrid_idx])) {
                 // we ran inference for this subgrid
-                recGridMapTensor.index_put_({rowSlice, colSlice}, outputs.index({subgrid_idx, 0, "..."}) + subgridMeans[subgrid_idx]);
-                subgrid_idx += 1;
+                auto denormalizedTensor = outputs.index({batch_idx, 0, rowSlice, colSlice}) + subgridMeans[subgrid_idx];
+                recGridMapTensor.index_put_({rowSlice, colSlice}, outputs.index({batch_idx, 0, "..."}) + subgridMeans[subgrid_idx]);
+
+                batch_idx += 1;
             } else {
                 // we didn't run inference for this subgrid
                 recGridMapTensor.index_put_({rowSlice, colSlice}, occGridMapTensor.index({0, 0, rowSlice, colSlice}));
             }
 
+            subgrid_idx += 1;
             start_col_idx += subgridCols;
             stop_col_idx += subgridCols;
         }
