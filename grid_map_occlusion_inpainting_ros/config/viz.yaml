@@ -1,0 +1,21 @@
+# grid_map_topic: /elevation_mapping/elevation_map_recordable
+grid_map_topic: /grid_map_occlusion_inpainting/rec_grid_map
+grid_map_visualizations:
+  - name: elevation_points
+    type: point_cloud
+    params:
+     layer: elevation
+  - name: elevation_grid
+    type: occupancy_grid
+    params:
+     layer: comp_grid_map
+     data_min: -5
+     data_max: 10
+  - name: elevation_cells
+    type: grid_cells
+    params:
+      layer: elevation
+  - name: flat_grid
+    type: flat_point_cloud
+    params:
+      height: 0.0
