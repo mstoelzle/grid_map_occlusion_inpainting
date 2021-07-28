@@ -151,38 +151,6 @@ class OcclusionInpainter
 
             bool inpaintNeuralNetwork(grid_map::GridMap& gridMap);
         
-            /* static torch::Tensor eigenVectorToTorchTensor(Eigen::VectorXd e){
-                auto t = torch::rand({e.rows()});
-                float* data = t.data_ptr<float>();
-
-                Eigen::Map<Eigen::VectorXf> ef(data,t.size(0),1);
-                ef = e.cast<float>();
-
-                t.requires_grad_(true);
-                return t;
-            }
-
-            static torch::Tensor eigenMatrixToTorchTensor(Eigen::MatrixXd e){
-                auto t = torch::rand({e.cols(),e.rows()});
-                float* data = t.data_ptr<float>();
-
-                Eigen::Map<Eigen::MatrixXf> ef(data,t.size(1),t.size(0));
-                ef = e.cast<float>();
-                t.requires_grad_(true);
-                return t.transpose(0,1);
-            }
-
-            static Eigen::MatrixXd torchTensorToEigenMatrix(torch::Tensor t){
-                auto t = torch::rand({e.cols(),e.rows()});
-
-
-                float* data = t.data_ptr<float>();
-
-                Eigen::Map<Eigen::MatrixXf> ef(data,t.size(1),t.size(0));
-                ef = e.cast<float>();
-                t.requires_grad_(true);
-                return e.transpose(0,1);
-            } */
         #endif
 };
 
