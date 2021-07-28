@@ -23,3 +23,6 @@ subgrids: {
   subgrid_cols: -1,
   subgrid_max_occ_ratio_thresh: 1.
 }
+
+# visualization
+visualize_with_open_cv: false

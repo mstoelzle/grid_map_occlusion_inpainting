@@ -66,6 +66,9 @@ class OcclusionInpainter
         // We only run inference on subgrids with less than x% occlusion, otherwise we use the occluded input subgrid
         double subgridMaxOccRatioThresh_ = 1.;
 
+        // visualization
+        bool visualizeWithOpenCV_ = false;
+
         // getters and setters
         void setOccGridMap(const grid_map::GridMap& occGridMap);
         grid_map::GridMap getGridMap();
@@ -103,6 +106,8 @@ class OcclusionInpainter
             double occ_ratio = 1 - nocc_cells / ((double) total_cells);
             return occ_ratio;
         }
+
+        void visualizeGridMapWithOpenCV(grid_map::GridMap& gridMap);
 
         // libtorch
         #if USE_TORCH

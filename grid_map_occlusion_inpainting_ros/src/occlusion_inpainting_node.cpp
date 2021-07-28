@@ -46,12 +46,14 @@ void OcclusionInpaintingNode::configure() {
   nodeHandle_.param<std::string>("input_layer", occInpainter_.inputLayer_, "occ_grid_map");
   nodeHandle_.param<bool>("resizing/resize", occInpainter_.resize_, false);
   nodeHandle_.param<double>("resizing/target_resolution", occInpainter_.targetResolution_, 0.1);
-  nodeHandle_.param<double>("inpaint_radius", occInpainter_.inpaintRadius_, 0.3);
+  nodeHandle_.param<double>("inpaint_radius", occInpainter_.inpaintRadius_, 0.3);  
+  nodeHandle_.param<bool>("use_gpu", occInpainter_.useGpu_, false);
   nodeHandle_.param<double>("NaN_replacement", occInpainter_.NaN_replacement_, 0.);
   nodeHandle_.param<bool>("subgrids/divide_into_subgrids", occInpainter_.divideIntoSubgrids_, false);
   nodeHandle_.param<int>("subgrids/subgrid_rows", occInpainter_.subgridRows_, 64);
   nodeHandle_.param<int>("subgrids/subgrid_cols", occInpainter_.subgridCols_, 64);
   nodeHandle_.param<double>("subgrids/subgrid_max_occ_ratio_thresh", occInpainter_.subgridMaxOccRatioThresh_, 1.);
+  nodeHandle_.param<bool>("visualize_with_open_cv", occInpainter_.visualizeWithOpenCV_, false);
 
   std::string relNeuralNetworkPath;
   nodeHandle_.param<std::string>("neural_network_path", relNeuralNetworkPath, "models/default.pt");

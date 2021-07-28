@@ -20,6 +20,7 @@
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/imgproc.hpp"
 #include "opencv2/photo.hpp"
+#include <opencv2/highgui/highgui.hpp>
 
 #if USE_TORCH
 #include <torch/torch.h>
@@ -86,6 +87,10 @@ bool OcclusionInpainter::inpaintGridMap()
     std::vector<std::string> basicLayers = {"rec_grid_map", "comp_grid_map"};
     gridMap_.setBasicLayers(basicLayers);
     */
+
+    if (visualizeWithOpenCV_) {
+        visualizeGridMapWithOpenCV(gridMap_);
+    }
 
     return true;
 }
@@ -259,11 +264,36 @@ bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap& gridMap) {
 
     OcclusionInpainter::tensorToGridMapLayer(recGridMapTensor, "rec_grid_map", gridMap);
 
-    // denormalization of output
-    // gridMap["rec_grid_map"] = gridMap["norm_rec_grid_map"].array() + grid_map_mean;
-
     return true;
 }
 #endif
+
+void OcclusionInpainter::visualizeGridMapWithOpenCV(grid_map::GridMap& gridMap) {
+    cv::namedWindow("Occluded Grid Map");
+    cv::namedWindow("Reconstructed Grid Map");
+    cv::namedWindow("Composed Grid Map");
+
+    // Visualize as image.
+    float minValue = gridMap.get("occ_grid_map").minCoeffOfFinites();
+    float maxValue = gridMap.get("occ_grid_map").maxCoeffOfFinites();
+    cv::Mat occImage;
+    grid_map::GridMapCvConverter::toImage<unsigned char, 3>(gridMap, "occ_grid_map", CV_8UC3, minValue, maxValue, occImage);
+    cv::imshow("Occluded Grid Map", occImage);
+    cv::waitKey(40);
+
+    minValue = gridMap.get("rec_grid_map").minCoeffOfFinites();
+    maxValue = gridMap.get("rec_grid_map").maxCoeffOfFinites();
+    cv::Mat recImage;
+    grid_map::GridMapCvConverter::toImage<unsigned char, 3>(gridMap, "rec_grid_map", CV_8UC3, minValue, maxValue, recImage);
+    cv::imshow("Reconstructed Grid Map", recImage);
+    cv::waitKey(40);
+
+    minValue = gridMap.get("comp_grid_map").minCoeffOfFinites();
+    maxValue = gridMap.get("comp_grid_map").maxCoeffOfFinites();
+    cv::Mat compImage;
+    grid_map::GridMapCvConverter::toImage<unsigned char, 3>(gridMap, "comp_grid_map", CV_8UC3, minValue, maxValue, compImage);
+    cv::imshow("Composed Grid Map", compImage);
+    cv::waitKey(40);
+}
 
 } /* namespace */
