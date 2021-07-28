@@ -56,6 +56,7 @@ class OcclusionInpainter
 
         // neural network parameters
         std::string neuralNetworkPath_ = "/home/mstolzle/catkin_ws/src/grid_map_occlusion_inpainting/grid_map_occlusion_inpainting_core/models/gonzen.pt";
+        bool useGpu_ = false;
         double NaN_replacement_ = 0.; // replacement values for NaNs in occluded grid map before inputting into neural network
 
         // division into subgrids for NN inference
@@ -144,8 +145,8 @@ class OcclusionInpainter
             // libtorch attributes
             torch::jit::script::Module module_;
 
-            static torch::Device getDevice(){
-                torch::Device device(torch::cuda::is_available() ? torch::kCUDA : torch::kCPU);
+            static torch::Device getDevice(bool useGpu){
+                torch::Device device((torch::cuda::is_available() && useGpu) ? torch::kCUDA : torch::kCPU);
                 return device;
             }
 
