@@ -27,8 +27,8 @@ OcclusionInpaintingNode::OcclusionInpaintingNode(ros::NodeHandle& nodeHandle)
   grid_map_occlusion_inpainting::OcclusionInpainter occInpainter_();
 
   // Subscriber
-  nodeHandle_.param<std::string>("occ_grid_map_topic", occGridMapTopic_, "occ_grid_map");
-  sub_ = nodeHandle_.subscribe(occGridMapTopic_, 1, &OcclusionInpaintingNode::sub_callback, this);
+  nodeHandle_.param<std::string>("input_grid_map_topic", inputGridMapTopic_, "input_grid_map");
+  sub_ = nodeHandle_.subscribe(inputGridMapTopic_, 1, &OcclusionInpaintingNode::sub_callback, this);
 
   // Publisher
   nodeHandle_.param<std::string>("rec_grid_map_topic", recGridMapTopic_, "rec_grid_map");
@@ -69,15 +69,15 @@ void OcclusionInpaintingNode::configure() {
   }
 }
 
-void OcclusionInpaintingNode::sub_callback(const grid_map_msgs::GridMap & occGridMapMsg) 
+void OcclusionInpaintingNode::sub_callback(const grid_map_msgs::GridMap & inputGridMapMsg) 
 {
   ROS_INFO("Received occluded GridMap message");
 
   // load occluded grip map
-  grid_map::GridMap occGridMap;
-  grid_map::GridMapRosConverter::fromMessage(occGridMapMsg, occGridMap);
+  grid_map::GridMap inputGridMap;
+  grid_map::GridMapRosConverter::fromMessage(inputGridMapMsg, inputGridMap);
 
-  occInpainter_.setOccGridMap(occGridMap);
+  occInpainter_.setInputGridMap(inputGridMap);
   if (!occInpainter_.inpaintGridMap()){
     ROS_WARN("Could not inpaint grid map");
   }

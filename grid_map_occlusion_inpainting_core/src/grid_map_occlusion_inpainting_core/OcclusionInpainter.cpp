@@ -42,7 +42,7 @@ OcclusionInpainter::~OcclusionInpainter()
     
 }
 
-void OcclusionInpainter::setOccGridMap(const grid_map::GridMap& occGridMap)
+void OcclusionInpainter::setInputGridMap(const grid_map::GridMap& occGridMap)
 {
     inputGridMap_ = occGridMap;
 

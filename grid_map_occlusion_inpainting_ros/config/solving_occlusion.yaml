@@ -1,4 +1,4 @@
-occ_grid_map_topic: "/elevation_mapping/elevation_map_recordable" # topic of input grid maps
+input_grid_map_topic: "/elevation_mapping/elevation_map_recordable" # topic of input grid maps
 rec_grid_map_topic: "rec_grid_map" # topic of output grid maps
 
 inpaint_method: 2 # Navier-Stokes, Telea or NN

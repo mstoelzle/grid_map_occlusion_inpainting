@@ -70,7 +70,7 @@ class OcclusionInpainter
         bool visualizeWithOpenCV_ = false;
 
         // getters and setters
-        void setOccGridMap(const grid_map::GridMap& occGridMap);
+        void setInputGridMap(const grid_map::GridMap& occGridMap);
         grid_map::GridMap getGridMap();
 
         // logic functions

@@ -1,4 +1,4 @@
-occ_grid_map_topic: "occ_grid_map" # topic of input grid maps
+input_grid_map_topic: "input_grid_map" # topic of input grid maps
 rec_grid_map_topic: "rec_grid_map" # topic of output grid maps
 
 inpaint_method: 1 # Navier-Stokes, Telea or NN
@@ -13,7 +13,7 @@ resizing: {
 inpaint_radius: 0.12
 
 # neural network parameters
-neural_network_path: "models/gonzen.pt"
+neural_network_path: "models/gonzen_traced.pt" # relative to package root
 use_gpu: false
 NaN_replacement: 0.0
 

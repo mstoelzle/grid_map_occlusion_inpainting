@@ -28,10 +28,10 @@ class OcclusionInpaintingNode
         * Callback function for the point cloud 2.
         * @param message the point cloud2 message to be converted to a grid map msg
         */
-        void sub_callback(const grid_map_msgs::GridMap & occGridMapMsg);
+        void sub_callback(const grid_map_msgs::GridMap & inputGridMapMsg);
 
     private:
-        std::string occGridMapTopic_;
+        std::string inputGridMapTopic_;
         std::string recGridMapTopic_;
 
         //! ROS nodehandle.
