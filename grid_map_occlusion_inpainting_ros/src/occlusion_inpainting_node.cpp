@@ -28,11 +28,17 @@ OcclusionInpaintingNode::OcclusionInpaintingNode(ros::NodeHandle& nodeHandle)
 
   // Subscriber
   nodeHandle_.param<std::string>("input_grid_map_topic", inputGridMapTopic_, "input_grid_map");
-  sub_ = nodeHandle_.subscribe(inputGridMapTopic_, 1, &OcclusionInpaintingNode::sub_callback, this);
+  input_sub_ = nodeHandle_.subscribe(inputGridMapTopic_, 1, &OcclusionInpaintingNode::sub_callback, this);
 
   // Publisher
+  nodeHandle_.param<std::string>("occ_grid_map_topic", occGridMapTopic_, "occ_grid_map");
+  occ_pub_ = nodeHandle_.advertise<grid_map_msgs::GridMap>(occGridMapTopic_, 1, true);
   nodeHandle_.param<std::string>("rec_grid_map_topic", recGridMapTopic_, "rec_grid_map");
-  pub_ = nodeHandle_.advertise<grid_map_msgs::GridMap>(recGridMapTopic_, 1, true);
+  rec_pub_ = nodeHandle_.advertise<grid_map_msgs::GridMap>(recGridMapTopic_, 1, true);
+  nodeHandle_.param<std::string>("comp_grid_map_topic", compGridMapTopic_, "comp_grid_map");
+  comp_pub_ = nodeHandle_.advertise<grid_map_msgs::GridMap>(compGridMapTopic_, 1, true);
+  nodeHandle_.param<std::string>("all_grid_map_topic", allGridMapTopic_, "all_grid_map");
+  all_pub_ = nodeHandle_.advertise<grid_map_msgs::GridMap>(allGridMapTopic_, 1, true);
 }
 
 OcclusionInpaintingNode::~OcclusionInpaintingNode()
@@ -87,7 +93,7 @@ void OcclusionInpaintingNode::sub_callback(const grid_map_msgs::GridMap & inputG
   // publish reconstructed DEM
   grid_map_msgs::GridMap recGridMapMsg;
   grid_map::GridMapRosConverter::toMessage(recGridMap, recGridMapMsg);
-  pub_.publish(recGridMapMsg);
+  all_pub_.publish(recGridMapMsg);
 }
 
 } /* namespace */
