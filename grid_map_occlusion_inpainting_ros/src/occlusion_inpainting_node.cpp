@@ -88,12 +88,29 @@ void OcclusionInpaintingNode::sub_callback(const grid_map_msgs::GridMap & inputG
     ROS_WARN("Could not inpaint grid map");
   }
   
-  grid_map::GridMap recGridMap = occInpainter_.getGridMap();
+  grid_map::GridMap allGridMap = occInpainter_.getGridMap();
+
+  grid_map::GridMap occGridMap, recGridMap, compGridMap;
+  occGridMap.setGeometry(allGridMap.getLength(), allGridMap.getResolution(), allGridMap.getPosition());
+  occGridMap.addDataFrom(allGridMap, true, true, false, {"occ_grid_map"});
+  occGridMap.setBasicLayers({"occ_grid_map"});
+  recGridMap.setGeometry(allGridMap.getLength(), allGridMap.getResolution(), allGridMap.getPosition());
+  recGridMap.addDataFrom(allGridMap, true, true, false, {"rec_grid_map"});
+  recGridMap.setBasicLayers({"rec_grid_map"});
+  compGridMap.setGeometry(allGridMap.getLength(), allGridMap.getResolution(), allGridMap.getPosition());
+  compGridMap.addDataFrom(allGridMap, true, true, false, {"comp_grid_map"});
+  compGridMap.setBasicLayers({"comp_grid_map"});
 
   // publish reconstructed DEM
-  grid_map_msgs::GridMap recGridMapMsg;
+  grid_map_msgs::GridMap occGridMapMsg, recGridMapMsg, compGridMapMsg, allGridMapMsg;
+  grid_map::GridMapRosConverter::toMessage(occGridMap, occGridMapMsg);
+  occ_pub_.publish(occGridMapMsg);
   grid_map::GridMapRosConverter::toMessage(recGridMap, recGridMapMsg);
-  all_pub_.publish(recGridMapMsg);
+  rec_pub_.publish(recGridMapMsg);
+  grid_map::GridMapRosConverter::toMessage(compGridMap, compGridMapMsg);
+  comp_pub_.publish(compGridMapMsg);
+  grid_map::GridMapRosConverter::toMessage(allGridMap, allGridMapMsg);
+  all_pub_.publish(allGridMapMsg);
 }
 
 } /* namespace */
