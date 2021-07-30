@@ -142,9 +142,11 @@ bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap& gridMap) {
     // torch device
     torch::Device device = OcclusionInpainter::getDevice(useGpu_);
 
-    // init torch tensors
+    // init torch tensor
     auto occGridMapTensor = torch::zeros({1, 1, rows, cols});
-    OcclusionInpainter::gridMapLayerToTensor(gridMap, "nn_input_grid_map", occGridMapTensor);
+    OcclusionInpainter::gridMapLayerToTensor(gridMap, "occ_grid_map", occGridMapTensor);
+    auto occGridMapNaNReplTensor = torch::zeros({1, 1, rows, cols});
+    OcclusionInpainter::gridMapLayerToTensor(gridMap, "nn_input_grid_map", occGridMapNaNReplTensor);
     auto occMaskTensor = torch::zeros({1, 1, rows, cols});
     OcclusionInpainter::gridMapLayerToTensor(gridMap, "occ_mask", occMaskTensor);
     // we need to invert the occlusion mask
@@ -153,7 +155,7 @@ bool OcclusionInpainter::inpaintNeuralNetwork(grid_map::GridMap& gridMap) {
     invOccMaskTensor.index_put_({torch::eq(occMaskTensor, 1)}, 0);
 
     // assemble channels
-    torch::Tensor inputTensorUnsplit = torch::cat({occGridMapTensor, invOccMaskTensor}, 1);
+    torch::Tensor inputTensorUnsplit = torch::cat({occGridMapNaNReplTensor, invOccMaskTensor}, 1);
 
     // division into subgrids
     int subgridRows = subgridRows_;
