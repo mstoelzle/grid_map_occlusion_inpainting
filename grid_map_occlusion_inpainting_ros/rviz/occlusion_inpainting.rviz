@@ -73,7 +73,7 @@ Visualization Manager:
       Show Grid Lines: true
       Topic: /grid_map_occlusion_inpainting/all_grid_map
       Unreliable: false
-      Use Rainbow: false
+      Use Rainbow: true
       Value: true
     - Alpha: 1
       Autocompute Intensity Bounds: true
