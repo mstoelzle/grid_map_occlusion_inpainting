@@ -41,6 +41,9 @@ Then we can install PyTorch:
 catkin_make
 ```
 
+## Configuration
+ROS parameters are used for configuration. A sample .YAML configuration files can be found in the `grid_map_occlusion_inpainting_ros/config` folder. In particular, the inpainting method and the input topic and input grid map layer can be chosen
+
 ## Usage
 Run node:
 ```bash
@@ -50,3 +53,10 @@ with rviz visualization of grid map:
 ```bash
 roslaunch grid_map_occlusion_inpainting_ros occlusion_inpainting.launch config_file:=solving_occlusion.yaml
 ```
+
+## Published Topics
+The ROS node publishes several topics:
+1. The GridMapMsg published at `/grid_map_occlusion_inpainting/all_grid_map` contains all layers of the original input GridMapMsg and additionally the layers of the occluded grid map `occ_grid_map`, the occlusion mask at `occ_mask`, the reconstructed grid map at the layer `rec_grid_map` and finally the composed grid map at layer `comp_grid_map`.
+2. The GridMapMsg published at `/grid_map_occlusion_inpainting/occ_grid_map` contains the occluded grid map at layer `occ_grid_map`.
+3. The GridMapMsg published at `/grid_map_occlusion_inpainting/rec_grid_map` contains the reconstructed grid map at layer `rec_grid_map`.
+4. The GridMapMsg published at `/grid_map_occlusion_inpainting/comp_grid_map` contains the composed grid map at layer `comp_grid_map`.
