@@ -94,12 +94,18 @@ void OcclusionInpaintingNode::sub_callback(const grid_map_msgs::GridMap & inputG
   occGridMap.setGeometry(allGridMap.getLength(), allGridMap.getResolution(), allGridMap.getPosition());
   occGridMap.addDataFrom(allGridMap, true, true, false, {"occ_grid_map"});
   occGridMap.setBasicLayers({"occ_grid_map"});
+  occGridMap.setFrameId(allGridMap.getFrameId());
+  occGridMap.setTimestamp(allGridMap.getTimestamp());
   recGridMap.setGeometry(allGridMap.getLength(), allGridMap.getResolution(), allGridMap.getPosition());
   recGridMap.addDataFrom(allGridMap, true, true, false, {"rec_grid_map"});
   recGridMap.setBasicLayers({"rec_grid_map"});
+  recGridMap.setFrameId(allGridMap.getFrameId());
+  recGridMap.setTimestamp(allGridMap.getTimestamp());
   compGridMap.setGeometry(allGridMap.getLength(), allGridMap.getResolution(), allGridMap.getPosition());
   compGridMap.addDataFrom(allGridMap, true, true, false, {"comp_grid_map"});
   compGridMap.setBasicLayers({"comp_grid_map"});
+  compGridMap.setFrameId(allGridMap.getFrameId());
+  compGridMap.setTimestamp(allGridMap.getTimestamp());
 
   // publish reconstructed DEM
   grid_map_msgs::GridMap occGridMapMsg, recGridMapMsg, compGridMapMsg, allGridMapMsg;
