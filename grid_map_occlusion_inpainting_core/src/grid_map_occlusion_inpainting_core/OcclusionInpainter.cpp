@@ -83,11 +83,8 @@ bool OcclusionInpainter::inpaintGridMap()
 
     OcclusionInpainter::addCompLayer(gridMap_);
 
-    /*
-    std::vector<std::string> basicLayers = {"rec_grid_map", "comp_grid_map"};
-    gridMap_.setBasicLayers(basicLayers);
-    */
-
+    gridMap_.setBasicLayers({"comp_grid_map"});
+    
     if (visualizeWithOpenCV_) {
         visualizeGridMapWithOpenCV(gridMap_);
     }
