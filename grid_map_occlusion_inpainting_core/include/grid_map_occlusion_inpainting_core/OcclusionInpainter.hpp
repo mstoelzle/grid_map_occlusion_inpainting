@@ -78,7 +78,6 @@ class OcclusionInpainter
 
         static void addOccMask(grid_map::GridMap& gridMap, const std::string& layer) {
             gridMap.add("occ_mask", 0.0);
-            // mapOut.setBasicLayers(std::vector<std::string>());
             for (grid_map::GridMapIterator iterator(gridMap); !iterator.isPastEnd(); ++iterator) {
                 if (!gridMap.isValid(*iterator, layer)) {
                     gridMap.at("occ_mask", *iterator) = 1.0;
