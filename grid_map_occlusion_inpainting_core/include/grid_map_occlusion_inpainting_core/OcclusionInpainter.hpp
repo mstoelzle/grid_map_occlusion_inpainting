@@ -55,7 +55,7 @@ class OcclusionInpainter
         double inpaintRadius_ = 0.3; // inpaint radius for Telea, Navier-Stokes [m]
 
         // neural network parameters
-        std::string neuralNetworkPath_ = "/home/mstolzle/catkin_ws/src/grid_map_occlusion_inpainting/grid_map_occlusion_inpainting_core/models/gonzen.pt";
+        std::string neuralNetworkPath_ = "/home/mstolzle/catkin_ws/src/grid_map_occlusion_inpainting/grid_map_occlusion_inpainting_core/models/gonzen_traced.pt";
         bool useGpu_ = false;
         double NaN_replacement_ = 0.; // replacement values for NaNs in occluded grid map before inputting into neural network
 
