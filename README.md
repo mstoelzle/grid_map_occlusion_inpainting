@@ -60,3 +60,17 @@ The ROS node publishes several topics:
 2. The GridMapMsg published at `/grid_map_occlusion_inpainting/occ_grid_map` contains the occluded grid map at layer `occ_grid_map`.
 3. The GridMapMsg published at `/grid_map_occlusion_inpainting/rec_grid_map` contains the reconstructed grid map at layer `rec_grid_map`.
 4. The GridMapMsg published at `/grid_map_occlusion_inpainting/comp_grid_map` contains the composed grid map at layer `comp_grid_map`.
+
+## Helpful commands
+Source workspace
+```
+source ~/catkin_ws/devel/setup.bash
+```
+Replay rosbag:
+```bash
+rosbag play mission_1_elevation_map.bag -r 0.1
+```
+Record published gonzen mine rosbag:
+```bash
+rosbag record /grid_map_occlusion_inpainting/occ_grid_map /grid_map_occlusion_inpainting/rec_grid_map /grid_map_occlusion_inpainting/comp_grid_map /grid_map_occlusion_inpainting/all_grid_map /msf_core/odometry_in_darpa /msf_loam_alphasense_imu/msf_core/maplab_odometry /state_estimator/odometry /elevation_mapping/elevation_map_recordable
+```
