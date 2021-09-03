@@ -68,9 +68,9 @@ source ~/catkin_ws/devel/setup.bash
 ```
 Replay rosbag:
 ```bash
-rosbag play mission_1_elevation_map.bag -r 0.1
+rosbag play mission_1.bag -r 0.2
 ```
 Record published gonzen mine rosbag:
 ```bash
-rosbag record /grid_map_occlusion_inpainting/occ_grid_map /grid_map_occlusion_inpainting/rec_grid_map /grid_map_occlusion_inpainting/comp_grid_map /grid_map_occlusion_inpainting/all_grid_map /msf_core/odometry_in_darpa /msf_loam_alphasense_imu/msf_core/maplab_odometry /state_estimator/odometry /elevation_mapping/elevation_map_recordable
+rosbag record /grid_map_occlusion_inpainting/occ_grid_map /grid_map_occlusion_inpainting/rec_grid_map /grid_map_occlusion_inpainting/comp_grid_map /grid_map_occlusion_inpainting/all_grid_map /elevation_mapping/elevation_map_recordable /state_estimator/anymal_state
 ```
