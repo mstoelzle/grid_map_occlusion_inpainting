@@ -16,7 +16,7 @@ resizing: {
 inpaint_radius: 0.140625
 
 # neural network parameters
-neural_network_path: "models/gonzen_traced.pt" # relative to package root
+neural_network_path: "models/eth_stairs_traced.pt" # relative to package root
 use_gpu: false
 NaN_replacement: 0.0
 
