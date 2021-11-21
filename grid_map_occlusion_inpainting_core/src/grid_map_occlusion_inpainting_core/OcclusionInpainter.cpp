@@ -116,17 +116,17 @@ bool OcclusionInpainter::inpaintOpenCV(grid_map::GridMap& gridMap) {
 
 #if USE_TORCH
 bool OcclusionInpainter::loadNeuralNetworkModel() {
-    try {
+    // try {
         // Deserialize the ScriptModule from a file using torch::jit::load().
         module_ = torch::jit::load(neuralNetworkPath_);
 
         torch::Device device = OcclusionInpainter::getDevice(useGpu_);
         module_.to(device);
-    }
-    catch (const c10::Error& e) {
-        throw std::runtime_error("Could not load the neural network model");
-        return false;
-    }
+    // }
+    // catch (const c10::Error& e) {
+    //     throw std::runtime_error("Could not load the neural network model");
+    //     return false;
+    // }
    
     return true;
 }
